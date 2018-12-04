@@ -1,7 +1,7 @@
 {
-  "name": "parcel-plugin-injecter",
+  "name": "parcel-plugin-asset-plus",
   "version": "0.1.0",
-  "description": "A parcel plugin that allows injecting markup into .html outfiles",
+  "description": "A parcel plugin that modifies the default asset behaviour for prototyping",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
   "license": "MIT",
@@ -15,9 +15,5 @@
   ],
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
-  },
-  "peerDependencies": {
-    "nunjucks": "^3.0.0",
-    "parcel-bundler": "^1.0.0"
   }
 }

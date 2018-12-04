@@ -12,11 +12,18 @@ class Config {
             env: "NODE_ENV"
         },
         port: {
-            doc: "The port to host the development server from",
+            doc: "The port to bind the development server to",
             format: "port",
             default: 8080,
             env: "PORT",
             arg: "port"
+        },
+        hostname: {
+            doc: "The hostname to bind the development server to",
+            format: "String",
+            default: "localhost",
+            env: "HOSTNAME",
+            arg: "hostname"
         },
         entryTypes: {
             doc: "Valid file types for entrypoints",

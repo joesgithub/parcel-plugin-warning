@@ -17,6 +17,35 @@ class Template {
         this.template = opts.template
     }
 
+    /**
+     * Bootstraps a new project
+     * 
+     * @param {String} projectPath
+     * @param {String} template A valid "name" of a template package
+     */
+    async bootstrap(projectPath, template) {
+        this.createProject(projectPath);
+        this.normalizeProjectPackage();
+        await this.installTemplateDependency(template);
+        await this.copyTemplateToProject(projectPath);
+    }
+
+    /**
+     * Reinitializes a project from its template
+     * 
+     * @param {String} projectPath
+     * @param {String} template A valid "name" of a template package
+     */
+    async update(projectPath, template) {
+        await this.installTemplateDependency(template);
+        await this.copyTemplateToProject(projectPath);
+    }
+
+    /**
+     * Generates a new project with a package.json config
+     * 
+     * @param {String} projectPath
+     */
     createProject(projectPath) {
         const projectPath = path || this.projectPath;
         const projectPkgPath = getFromProject('package.json', projectPath);
@@ -42,6 +71,11 @@ class Template {
         fs.writeFileSync(projectPkgPath, JSON.stringify(projectPkg, null, 4));
     }
 
+    /**
+     * Normalizes a project package.json to include mandatory fields
+     * 
+     * @param {String} projectPath 
+     */
     normalizeProjectPackage(projectPath) {
         const projectPkg = require(getFromProject('package.json'), projectPath);
 
@@ -54,6 +88,11 @@ class Template {
         projectPkg.scripts.update = 'pgen update';
     }
 
+    /**
+     * Copies the contents of a template package's `src` folder into the project
+     * 
+     * @param {String} projectPath 
+     */
     async copyTemplateToProject(projectPath) {
         const projectPath = projectPath || this.projectPath;
         const projectPkg = require(getFromProject('package.json'), projectPath);
@@ -83,6 +122,12 @@ class Template {
         }
     }
 
+    /**
+     * Resolves the template package from the project's package.json
+     * Looks in "dependencies" and "devDependencies" for the first valid template package
+     * 
+     * @param {Object} projectPkg 
+     */
     resolveTemplateDependency(projectPkg) {
         const deps = projectPkg.dependencies.concat(projectPkg.devDependencies);
         const matchExp = new RegExp(/parcel-prototyper-template-.*?/);
@@ -96,6 +141,11 @@ class Template {
         return template[0]
     }
 
+    /**
+     * Uses NPM to install a valid template package
+     * 
+     * @param {String} template A valid "name" of a template package
+     */
     async installTemplateDependency(template) {
         const template = template || this.template;
 

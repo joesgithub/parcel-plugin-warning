@@ -1,7 +1,9 @@
 "use strict";
 
 require('v8-compile-cache');
+
 const program = require('commander');
+const Template = require('./template');
 const version = require('../package.json').version;
 
 program.version(version);
@@ -14,7 +16,7 @@ program
         '-t, --template <template>',
         'Override the default project template'
     )
-    .action(`todo:`)
+    .action(bundle);
 
 program
     .command('serve')
@@ -69,7 +71,7 @@ program
         /^([0-5])$/
     )
     .option('-V, --version', 'output the version number')
-    .action(`TODO:`)
+    .action(bundle);
 
 program
     .command('build')
@@ -128,15 +130,15 @@ program
         'print a detailed build report after a completed build'
     )
     .option('-V, --version', 'output the version number')
-    .action(`TODO:`)
+    .action(bundle);
 
 program
     .command('help [command]')
     .description('Display help for all or specified commands')
     .action((command) => {
-        let cmd = program.commands.find((c) => c.name() === command || program)
-        cmd.help()
-    })
+        let cmd = program.commands.find((c) => c.name() === command || program);
+        cmd.help();
+    });
 
 program
     .on('--help', () => {
@@ -148,3 +150,89 @@ program
         );
         console.log('');
     })
+
+// Make serve the default command except for --help
+var args = process.argv;
+if (args[2] === '--help' || args[2] === '-h') args[2] = 'help';
+if (!args[2] || !program.commands.some(c => c.name() === args[2])) {
+  args.splice(2, 0, 'serve');
+}
+
+program.parse(args);
+
+async function bundle(main, command) {
+    // Require library here to make commands faster
+    const action = command.name();
+    const Config = require('./config');
+    const getEntryFiles = require('./utils/getEntryFiles');
+    const Pipeline = require('./pipeline');
+    const Template = require('./template');
+
+    // Setup default command paramaters
+    command.environment = "development";
+    command.throwErrors = false;
+    command.scopeHoist = false;
+
+    // Setup command paramaters for specific actions
+    switch (action) {
+        case "init":
+            // TODO:
+            break;
+        case "update":
+            // TODO:
+            break;
+        case "build":
+            command.env = "production"
+            process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+        case "watch":
+            // TODO:
+            command.watch = true;
+            break;
+        case "serve":
+            // TODO:
+            break;
+    }
+
+    const config = new Config(); // TODO: ensure CLI args get passed
+    const entryFiles = getEntryFiles(config.get('dirs.views'), config.get('entryTypes'));
+    const template = new Template({
+        projectPath: config.get('dirs.base'),
+        template: config.get('template')
+    })
+    const pipeline = new Pipeline({
+        entryFiles: entryFiles,
+        outDir: config.get('dirs.out'),
+        publicUrl: config.get('publicUrl'),
+        cache: config.get('cache'),
+        cacheDir: config.get('dirs.cache'),
+        logLevel: config.get('logLevel'),
+        sourceMaps: config.get('sourceMaps')
+    });
+
+    // Execute action
+    try {
+        switch (action) {
+            case "init":
+                await template.bootstrap();
+            break;
+            case "update":
+                await template.update();
+            break;
+            case "build":
+                await pipeline.build();
+            break;
+            case "watch":
+                await pipeline.watch();
+            break;
+            case "serve":
+                await pipeline.serve(
+                    config.get('port'),
+                    config.get('https'),
+                    config.get('hostname')
+                );
+            break;
+        }
+    } catch (error) {
+        throw new Error(error);
+    }
+}

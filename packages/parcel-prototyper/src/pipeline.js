@@ -54,6 +54,24 @@ class Pipeline {
 
         return mainBundle
     }
+
+    /**
+     * Generates a bundle and then watches for changes and rebuilds
+     */
+    async watch() {
+        // TODO;
+    }
+
+    /**
+     * Starts the watch task as well as a local development server
+     * 
+     * @param {Number} port 
+     * @param {Boolean} https 
+     * @param {String} hostname 
+     */
+    async serve(port, https, hostname) {
+        // TODO:
+    }
 }
 
 module.exports = Pipeline

@@ -13,7 +13,7 @@ class DataFiles {
         const pattern = path.join(dir, "**/*.{json,yml,toml,js}");
         const files = await glob(pattern);
 
-        return files
+        return files;
     }
 
     async getFiles(files) {
@@ -32,7 +32,7 @@ class DataFiles {
             }
         });
 
-        return data
+        return data;
     }
 
     async loadJS(path) {
