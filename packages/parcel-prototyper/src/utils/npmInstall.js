@@ -16,7 +16,19 @@ module.exports = async (dependency, opts) => {
         const hasYarnLock = await fs.exists(getFromProject('yarn.lock'));
         const useYarn = hasYarnLock && !opts.ignoreYarn;
         const command = useYarn ? 'yarnpkg' : 'npm';
-        let args = useYarn ? ['add'] : ['install', '--save'];
+        let args = []
+
+        console.log(useYarn, opts);
+        
+        if (useYarn) {
+            args = opts.link 
+                ? args.concat(['link'])
+                : args.concat(['add']);
+         } else {
+            args = opts.link 
+                ? args.concat(['link'])
+                : args.concat(['install', '--save']);
+         }
 
         args = args.concat(dependency);
 

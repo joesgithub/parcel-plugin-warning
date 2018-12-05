@@ -120,7 +120,7 @@ class Template {
     
         try {
             const projectPkg = require(getFromProject('package.json', projectPath));
-            const template = this.resolveTemplateDependency(projectPkg);
+            const template = this.resolveTemplateDependency(projectPkg) || this.template;
             const nodeModulesPath = getFromProject('node_modules', projectPath);
             const templatePath = path.resolve(nodeModulesPath, template);
             const templateSrcPath = path.resolve(templatePath, 'src');
@@ -175,12 +175,20 @@ class Template {
         projectPath = projectPath || this.projectPath;
 
         let deps = Object.keys(pkg.peerDependencies) || []
+        let opts = {
+            cwd: projectPath,
+            verbose: true
+        }
 
         deps.push(template)
         deps.push(pkg.name);
 
+        if (process.env.DEVELOPER_MODE == "true") {
+            opts.link = true;
+        }
+
         try {
-            await npmInstall(deps, {cwd: projectPath});
+            await npmInstall(deps, opts);
         } catch (error) {
             throw error;
         }
