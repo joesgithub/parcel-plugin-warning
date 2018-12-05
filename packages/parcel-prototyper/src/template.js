@@ -6,6 +6,7 @@ const getFromProject = require('./utils/getFromProject');
 const glob = require('glob');
 const npmInstall = require('./utils/npmInstall');
 const path = require('path');
+const pkg = require('../package.json');
 
 class Template {
     /**
@@ -20,25 +21,41 @@ class Template {
     /**
      * Bootstraps a new project
      * 
-     * @param {String} projectPath
+     * @param {String} basePath The base path for a project template
      * @param {String} template A valid "name" of a template package
+     * @param {String} projectPath
      */
-    async bootstrap(projectPath, template) {
-        this.createProject(projectPath);
-        this.normalizeProjectPackage();
-        await this.installTemplateDependency(template);
-        await this.copyTemplateToProject(projectPath);
+    async bootstrap(basePath, template, projectPath) {
+        projectPath = projectPath || this.projectPath
+        template = template || this.template
+
+        try {
+            this.createProject(projectPath);
+            this.normalizeProjectPackage();
+            await this.installDependencies(template, projectPath);
+            await this.copyTemplateToProject(basePath, projectPath);
+        } catch (error) {
+            throw error;
+        }
     }
 
     /**
      * Reinitializes a project from its template
      * 
+     * @param {String} basePath The base path for a project template
      * @param {String} projectPath
      * @param {String} template A valid "name" of a template package
      */
-    async update(projectPath, template) {
-        await this.installTemplateDependency(template);
-        await this.copyTemplateToProject(projectPath);
+    async update(basePath, template, projectPath) {
+        projectPath = projectPath || this.projectPath
+        template = template || this.template
+
+        try {
+            await this.installDependencies(template);
+            await this.copyTemplateToProject(basePath, projectPath);
+        } catch (error) {
+            throw error;
+        }
     }
 
     /**
@@ -47,7 +64,7 @@ class Template {
      * @param {String} projectPath
      */
     createProject(projectPath) {
-        const projectPath = path || this.projectPath;
+        projectPath = projectPath || this.projectPath;
         const projectPkgPath = getFromProject('package.json', projectPath);
         const projectName = path.basename(projectPath);
         let projectPkg = {};
@@ -58,14 +75,14 @@ class Template {
         }
 
         if (!fs.existsSync(projectPkgPath)) {
-            projectPkg = {
-                name: projectName,
-                version: '0.1.0',
-                private: true,
-                dependencies: {},
-                scripts: {}
-              };
+            projectPkg = {}
         }
+
+        projectPkg.name = projectName;
+        projectPkg.version = '0.1.0';
+        projectPkg.private = true;
+        projectPkg.dependencies = {};
+        projectPkg.scripts = {};
 
         debug('Writing `package.json` to: %s', projectPkgPath);
         fs.writeFileSync(projectPkgPath, JSON.stringify(projectPkg, null, 4));
@@ -77,7 +94,9 @@ class Template {
      * @param {String} projectPath 
      */
     normalizeProjectPackage(projectPath) {
-        const projectPkg = require(getFromProject('package.json'), projectPath);
+        projectPath = projectPath || this.projectPath;
+        const projectPkgPath = getFromProject('package.json', projectPath);
+        const projectPkg = require(projectPkgPath);
 
         if (!projectPkg.scripts) {
             projectPkg.scripts = {}
@@ -86,6 +105,9 @@ class Template {
         projectPkg.scripts.start = 'pgen start';
         projectPkg.scripts.build = 'pgen build';
         projectPkg.scripts.update = 'pgen update';
+
+        debug('Writing `package.json` to: %s', projectPkgPath);
+        fs.writeFileSync(projectPkgPath, JSON.stringify(projectPkg, null, 4));
     }
 
     /**
@@ -93,32 +115,32 @@ class Template {
      * 
      * @param {String} projectPath 
      */
-    async copyTemplateToProject(projectPath) {
-        const projectPath = projectPath || this.projectPath;
-        const projectPkg = require(getFromProject('package.json'), projectPath);
-        const template = this.resolveTemplateDependency(projectPkg);
-        const nodeModulesPath = getFromProject('node_modules', projectPath);
-        const templatePath = path.resolve(nodeModulesPath, template);
-        const templateSrcPath = path.resolve(templatePath, 'src');
-
+    async copyTemplateToProject(basePath, projectPath) {
+        projectPath = projectPath || this.projectPath;
+    
         try {
+            const projectPkg = require(getFromProject('package.json', projectPath));
+            const template = this.resolveTemplateDependency(projectPkg);
+            const nodeModulesPath = getFromProject('node_modules', projectPath);
+            const templatePath = path.resolve(nodeModulesPath, template);
+            const templateSrcPath = path.resolve(templatePath, 'src');
             const pattern = path.join(templateSrcPath, '**/*');
             const templateFiles = await glob.sync(pattern);
 
             for (var key in templateFiles) {
                 const templateFilePath = templateFiles[key];
                 const templateRelPath = path.normalize(templateFilePath.replace(templateSrcPath, "./"));
-                const projectPath = path.resolve(projectPath, templateRelPath);
+                const projectTemplatePath = path.resolve(projectPath, basePath, templateRelPath);
                 const isDirectory = fs.lstatSync(templateFilePath).isDirectory();
 
                 if (isDirectory) {
-                    fs.mkdirpSync(projectPath);
+                    fs.mkdirpSync(projectTemplatePath);
                 } else {
-                    fs.copySync(templateFilePath, projectPath);
+                    fs.copySync(templateFilePath, projectTemplatePath);
                 }
             }
         } catch (error) {
-            throw new Error(error);
+            throw error;
         }
     }
 
@@ -129,30 +151,42 @@ class Template {
      * @param {Object} projectPkg 
      */
     resolveTemplateDependency(projectPkg) {
-        const deps = projectPkg.dependencies.concat(projectPkg.devDependencies);
+        const dependencies = projectPkg.dependencies || [];
+        const devDependencies = projectPkg.devDependencies || [];
+        const deps = Object.assign(devDependencies, dependencies);
         const matchExp = new RegExp(/parcel-prototyper-template-.*?/);
 
         if (!deps) {
             return false;
         }
 
-        const template = Object.keys(deps).filter((dep) => matchExp.exec(dep).length > 0);
+        const template = Object.keys(deps).filter((dep) => matchExp.exec(dep) !== null);
 
         return template[0]
     }
 
     /**
-     * Uses NPM to install a valid template package
+     * Uses NPM to install all dependencies
      * 
      * @param {String} template A valid "name" of a template package
      */
-    async installTemplateDependency(template) {
-        const template = template || this.template;
+    async installDependencies(template, projectPath) {
+        template = template || this.template;
+        projectPath = projectPath || this.projectPath;
+
+        let deps = Object.keys(pkg.peerDependencies) || []
+
+        deps.push(template)
+        deps.push(pkg.name);
 
         try {
-            await npmInstall(template);
+            await npmInstall(deps, {cwd: projectPath});
         } catch (error) {
-            throw new Error(error);
+            throw error;
         }
+
+        return true;
      }
 }
+
+module.exports = Template

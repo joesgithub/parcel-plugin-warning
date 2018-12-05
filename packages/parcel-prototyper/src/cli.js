@@ -1,9 +1,10 @@
 "use strict";
 
-require('v8-compile-cache');
+// unhandled promise rejections are deprecated; this will terminate the program in the future!
+process.on('unhandledRejection', r => console.log(r));
 
+require('v8-compile-cache');
 const program = require('commander');
-const Template = require('./template');
 const version = require('../package.json').version;
 
 program.version(version);
@@ -12,6 +13,15 @@ program.version(version);
 program
     .command('init [path]')
     .description('Initialize a new prototype')
+    .option(
+        '-t, --template <template>',
+        'Override the default project template'
+    )
+    .action(bundle);
+
+program
+    .command('update [path]')
+    .description('Update an existing project')
     .option(
         '-t, --template <template>',
         'Override the default project template'
@@ -145,7 +155,7 @@ program
         console.log('');
         console.log(
             '  Run `' +
-            chalk.bold('pgen help <command>') +
+            'pgen help <command>' +
             '` for more information on specific commands'
         );
         console.log('');
@@ -162,61 +172,63 @@ program.parse(args);
 
 async function bundle(main, command) {
     // Require library here to make commands faster
-    const action = command.name();
-    const Config = require('./config');
-    const getEntryFiles = require('./utils/getEntryFiles');
-    const Pipeline = require('./pipeline');
-    const Template = require('./template');
+    const cmd = command ? command : main;
+    const action = cmd.name();
 
-    // Setup default command paramaters
-    command.environment = "development";
-    command.throwErrors = false;
-    command.scopeHoist = false;
-
-    // Setup command paramaters for specific actions
-    switch (action) {
-        case "init":
-            // TODO:
-            break;
-        case "update":
-            // TODO:
-            break;
-        case "build":
-            command.env = "production"
-            process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-        case "watch":
-            // TODO:
-            command.watch = true;
-            break;
-        case "serve":
-            // TODO:
-            break;
-    }
-
-    const config = new Config(); // TODO: ensure CLI args get passed
-    const entryFiles = getEntryFiles(config.get('dirs.views'), config.get('entryTypes'));
-    const template = new Template({
-        projectPath: config.get('dirs.base'),
-        template: config.get('template')
-    })
-    const pipeline = new Pipeline({
-        entryFiles: entryFiles,
-        outDir: config.get('dirs.out'),
-        publicUrl: config.get('publicUrl'),
-        cache: config.get('cache'),
-        cacheDir: config.get('dirs.cache'),
-        logLevel: config.get('logLevel'),
-        sourceMaps: config.get('sourceMaps')
-    });
-
-    // Execute action
     try {
+        const Config = require('./config');
+        const getEntryFiles = require('./utils/getEntryFiles');
+        const Pipeline = require('./pipeline');
+        const Template = require('./template');
+
+        // Setup default command paramaters
+        cmd.environment = "development";
+        cmd.throwErrors = false;
+        cmd.scopeHoist = false;
+
+        // Setup command paramaters for specific actions
         switch (action) {
             case "init":
-                await template.bootstrap();
+                // TODO:
+                break;
+            case "update":
+                // TODO:
+                break;
+            case "build":
+                cmd.env = "production"
+                process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+            case "watch":
+                // TODO:
+                cmd.watch = true;
+                break;
+            case "serve":
+                // TODO:
+                break;
+        }
+
+        const config = new Config(); // TODO: ensure CLI args get passed
+        const entryFiles = getEntryFiles(config.get('dirs.views'), config.get('entryTypes'));
+        const template = new Template({
+            projectPath: config.get('cwd'),
+            template: config.get('template')
+        })
+        const pipeline = new Pipeline({
+            entryFiles: entryFiles,
+            outDir: config.get('dirs.out'),
+            publicUrl: config.get('publicUrl'),
+            cache: config.get('cache'),
+            cacheDir: config.get('dirs.cache'),
+            logLevel: config.get('logLevel'),
+            sourceMaps: config.get('sourceMaps')
+        });
+
+        // Execute action
+        switch (action) {
+            case "init":
+                await template.bootstrap(config.get('dirs.base'), command.template, main);
             break;
             case "update":
-                await template.update();
+                await template.update(config.get('dirs.base'), command.template, main);
             break;
             case "build":
                 await pipeline.build();
@@ -233,6 +245,6 @@ async function bundle(main, command) {
             break;
         }
     } catch (error) {
-        throw new Error(error);
+        console.log(error);
     }
 }

@@ -1,11 +1,9 @@
 'use strict';
 
-const debug = require('debug')('parcel-plugin-njk')
+const debug = require('debug')('parcel-plugin-njk-entry')
 const HTMLAsset = require('parcel-bundler/src/assets/HTMLAsset');
 const Nunjucks = require('nunjucks');
 const path = require('path');
-
-
 
 /**
  * Class extands HTMLAsset to add Nunjucks pre-parsing

@@ -25,6 +25,19 @@ class Config {
             env: "HOSTNAME",
             arg: "hostname"
         },
+        https: {
+            doc: "Enable or disable HTTPS",
+            format: "Boolean",
+            default: false,
+            env: "HTTPS",
+            arg: "https"
+        },
+        cwd: {
+            doc: "The desired current working directory; defaults to \"process.cwd()\"",
+            format: "String",
+            default: process.cwd(),
+            arg: "cwd"
+        },
         entryTypes: {
             doc: "Valid file types for entrypoints",
             format: "Array",
@@ -57,14 +70,14 @@ class Config {
             base: {
                 doc: "The project's base path",
                 format: "String",
-                default: process.cwd(),
+                default: "src",
                 env: "BASE_DIR",
                 arg: "base-dir"
             },
             views: {
                 doc: "The folder where views/entrypoints are stored",
                 format: "String",
-                default: "src",
+                default: "views",
                 env: "VIEWS_DIR",
                 arg: "views-dir"
             },
@@ -126,12 +139,13 @@ class Config {
 
     resolveDirs() {
         const dirs = this.config.get('dirs');
+        const cwd = this.config.get('cwd');
         const basePath = this.config.get('dirs.base');
         const keys = Object.keys(dirs).filter((k) => k !== "base");
 
         keys.forEach((k) => {
             const val = dirs[k];
-            const resolvedVal = path.resolve(basePath, val);
+            const resolvedVal = path.resolve(cwd, basePath, val);
 
             dirs[k] = resolvedVal;
         });

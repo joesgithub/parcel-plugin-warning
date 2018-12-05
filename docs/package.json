@@ -1,0 +1,21 @@
+{
+    "name": "parcel-prototyper-docs",
+    "version": "0.1.0",
+    "description": "Documentation and marketing site for parcel-prototyper",
+    "author": "chrisdmacrae <hello@chrisdmacrae.com>",
+    "homepage": "",
+    "license": "MIT",
+    "private": true,
+    "main": "lib/index.js",
+    "directories": {
+      "lib": "lib",
+      "test": "__tests__"
+    },
+    "files": [
+      "lib"
+    ],
+    "scripts": {
+      "test": "echo \"Error: run tests from root\" && exit 1"
+    }
+  }
+  

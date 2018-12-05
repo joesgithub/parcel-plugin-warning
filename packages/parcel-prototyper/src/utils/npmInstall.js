@@ -10,21 +10,27 @@ const spawn = require('cross-spawn');
  * @param {String|[String]} dependency A valid NPM dependency string
  */
 module.exports = async (dependency, opts) => {
-    const hasYarnLock = getFromProject('yarn.lock');
-    const useYarn = hasYarnLock && !opts.ignoreYarn;
-    const command = useYarn ? 'yarnpkg' : 'npm';
-    let args = useYarn ? ['add'] : ['install', '--save'];
+    opts = opts || {}
 
-    args = args.concat(dependency);
+    try {
+        const hasYarnLock = await fs.exists(getFromProject('yarn.lock'));
+        const useYarn = hasYarnLock && !opts.ignoreYarn;
+        const command = useYarn ? 'yarnpkg' : 'npm';
+        let args = useYarn ? ['add'] : ['install', '--save'];
 
-    const proc = spawn.sync(command, args, {
-      stdio: opts.verbose ? 'inherit' : 'ignore',
-      cwd: opts.cwd
-    });
+        args = args.concat(dependency);
 
-    if (proc.status !== 0) {
-      throw new Error(`${command} ${args.join(' ')} failed`);
+        const proc = spawn.sync(command, args, {
+            stdio: opts.verbose ? 'inherit' : 'ignore',
+            cwd: opts.cwd || process.cwd()
+        });
+
+        if (proc.status !== 0) {
+            throw new Error(`${command} ${args.join(' ')} failed`);
+        }
+
+        return true
+    } catch (error) {
+        throw error;
     }
-
-    return true
   };

@@ -40,7 +40,7 @@ class Pipeline {
     }
 
     handleBuildError(error) {
-        if (error) throw new Error(error);
+        if (error) throw error;
     }
 
     async build() {
@@ -49,7 +49,7 @@ class Pipeline {
         try {
             mainBundle = await this.bundler.bundle();
         } catch (error) {
-            throw new Error(error);
+            throw error;
         }
 
         return mainBundle

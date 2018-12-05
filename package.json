@@ -1,19 +1,21 @@
 {
-  "name": "parcel-prototypes",
-  "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "chrisdmacae <hello@chrisdmacrae.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "lerna": "^3.5.1"
-  },
-  "dependencies": {
-    "chalk": "^2.4.1",
-    "commander": "^2.19.0",
-    "cross-spawn": "^6.0.5"
-  }
+    "name": "parcel-prototypes",
+    "version": "0.1.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "pgen start",
+        "build": "pgen build",
+        "update": "pgen update"
+    },
+    "author": "chrisdmacae <hello@chrisdmacrae.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "lerna": "^3.5.1",
+        "parcel-prototyper": "file:packages/parcel-prototyper"
+    },
+    "dependencies": {
+        "parcel-prototyper-template-default": "file:packages/parcel-prototyper-template-default"
+    }
 }
