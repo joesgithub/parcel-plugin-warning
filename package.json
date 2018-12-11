@@ -1,21 +1,23 @@
 {
     "name": "parcel-prototypes",
     "version": "0.1.0",
+    "private": true,
     "description": "",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "pgen start",
-        "build": "pgen build",
-        "update": "pgen update"
-    },
     "author": "chrisdmacae <hello@chrisdmacrae.com>",
     "license": "MIT",
-    "devDependencies": {
-        "lerna": "^3.5.1",
-        "parcel-prototyper": "file:packages/parcel-prototyper"
+    "scripts": {
+        "build": "npx lerna run build",
+        "pgen": "node ./packages/parcel-prototyper/bin/index.js"
     },
-    "dependencies": {
-        "parcel-prototyper-template-default": "file:packages/parcel-prototyper-template-default"
-    }
+    "devDependencies": {
+        "@babel/cli": "^7.2.0",
+        "@babel/core": "^7.2.0",
+        "@babel/node": "^7.2.0",
+        "@babel/plugin-proposal-class-properties": "^7.2.0",
+        "@babel/preset-env": "^7.2.0",
+        "lerna": "^3.5.1"
+    },
+    "workspaces": [
+        "packages/*"
+    ]
 }

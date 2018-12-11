@@ -4,6 +4,7 @@
 process.on('unhandledRejection', r => console.log(r));
 
 require('v8-compile-cache');
+const debug = require('debug')('parcel-prototyper:cli');
 const program = require('commander');
 const version = require('../package.json').version;
 
@@ -11,7 +12,7 @@ program.version(version);
 
 // TODO: set option descriptions from config where applicable
 program
-    .command('init [path]')
+    .command('init <path>')
     .description('Initialize a new prototype')
     .option(
         '-t, --template <template>',
@@ -20,7 +21,7 @@ program
     .action(bundle);
 
 program
-    .command('update [path]')
+    .command('update <path>')
     .description('Update an existing project')
     .option(
         '-t, --template <template>',
@@ -48,8 +49,8 @@ program
         'Automatically open the development server in the browser specified; defaults to the default OS browser'
     )
     .option(
-        '-b, --base-dir',
-        'Set the base directory relative to the project; defaults to the project root'
+        '-e, --entry-dir',
+        'Set the entry directory relative to the project; defaults to the "src"'
     )
     .option(
         '-d, --out-dir',
@@ -103,8 +104,8 @@ program
         'Automatically open the development server in the browser specified; defaults to the default OS browser'
     )
     .option(
-        '-b, --base-dir',
-        'Set the base directory relative to the project; defaults to the project root'
+        '-e, --entry-dir',
+        'Set the entry directory relative to the project; defaults to "src"'
     )
     .option(
         '-d, --out-dir',
@@ -171,7 +172,8 @@ if (!args[2] || !program.commands.some(c => c.name() === args[2])) {
 program.parse(args);
 
 async function bundle(main, command) {
-    // Require library here to make commands faster
+    // Require libraries here to make commands faster
+    const path = require('path');
     const cmd = command ? command : main;
     const action = cmd.name();
 
@@ -180,33 +182,31 @@ async function bundle(main, command) {
         const getEntryFiles = require('./utils/getEntryFiles');
         const Pipeline = require('./pipeline');
         const Template = require('./template');
-
-        // Setup default command paramaters
-        cmd.environment = "development";
-        cmd.throwErrors = false;
-        cmd.scopeHoist = false;
+        const configOpts = {};
 
         // Setup command paramaters for specific actions
         switch (action) {
             case "init":
                 // TODO:
+                configOpts.cwd = path.resolve(process.cwd(), main);
                 break;
             case "update":
                 // TODO:
                 break;
             case "build":
-                cmd.env = "production"
+                configOpts.env = "production"
                 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
             case "watch":
                 // TODO:
-                cmd.watch = true;
+                configOpts.watch = true
                 break;
             case "serve":
                 // TODO:
+                configOpts.watch = true
                 break;
         }
 
-        const config = new Config(); // TODO: ensure CLI args get passed
+        const config = new Config(configOpts);
         const entryFiles = getEntryFiles(config.get('dirs.views'), config.get('entryTypes'));
         const template = new Template({
             projectPath: config.get('cwd'),
@@ -225,10 +225,10 @@ async function bundle(main, command) {
         // Execute action
         switch (action) {
             case "init":
-                await template.bootstrap(config.get('dirs.base'), command.template, main);
+                await template.bootstrap(config.get('dirs.entry'), command.template, main);
             break;
             case "update":
-                await template.update(config.get('dirs.base'), command.template, main);
+                await template.update(config.get('dirs.entry'), command.template, main);
             break;
             case "build":
                 await pipeline.build();

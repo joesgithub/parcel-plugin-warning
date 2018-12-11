@@ -21,11 +21,11 @@ class Template {
     /**
      * Bootstraps a new project
      * 
-     * @param {String} basePath The base path for a project template
+     * @param {String} entryPath The entry path for a project template
      * @param {String} template A valid "name" of a template package
      * @param {String} projectPath
      */
-    async bootstrap(basePath, template, projectPath) {
+    async bootstrap(entryPath, template, projectPath) {
         projectPath = projectPath || this.projectPath
         template = template || this.template
 
@@ -33,7 +33,7 @@ class Template {
             this.createProject(projectPath);
             this.normalizeProjectPackage();
             await this.installDependencies(template, projectPath);
-            await this.copyTemplateToProject(basePath, projectPath);
+            await this.copyTemplateToProject(entryPath, projectPath);
         } catch (error) {
             throw error;
         }
@@ -42,17 +42,17 @@ class Template {
     /**
      * Reinitializes a project from its template
      * 
-     * @param {String} basePath The base path for a project template
+     * @param {String} entryPath The entry path for a project template
      * @param {String} projectPath
      * @param {String} template A valid "name" of a template package
      */
-    async update(basePath, template, projectPath) {
+    async update(entryPath, template, projectPath) {
         projectPath = projectPath || this.projectPath
         template = template || this.template
 
         try {
             await this.installDependencies(template);
-            await this.copyTemplateToProject(basePath, projectPath);
+            await this.copyTemplateToProject(entryPath, projectPath);
         } catch (error) {
             throw error;
         }
@@ -115,7 +115,7 @@ class Template {
      * 
      * @param {String} projectPath 
      */
-    async copyTemplateToProject(basePath, projectPath) {
+    async copyTemplateToProject(entryPath, projectPath) {
         projectPath = projectPath || this.projectPath;
     
         try {
@@ -130,7 +130,7 @@ class Template {
             for (var key in templateFiles) {
                 const templateFilePath = templateFiles[key];
                 const templateRelPath = path.normalize(templateFilePath.replace(templateSrcPath, "./"));
-                const projectTemplatePath = path.resolve(projectPath, basePath, templateRelPath);
+                const projectTemplatePath = path.resolve(projectPath, entryPath, templateRelPath);
                 const isDirectory = fs.lstatSync(templateFilePath).isDirectory();
 
                 if (isDirectory) {
@@ -174,13 +174,14 @@ class Template {
         template = template || this.template;
         projectPath = projectPath || this.projectPath;
 
-        let deps = Object.keys(pkg.peerDependencies) || []
+        const realTemplatePath = this.resolveFileTemplate(template, projectPath);
+        let deps = []; // TODO: auto install peerDeps?
         let opts = {
             cwd: projectPath,
             verbose: true
         }
 
-        deps.push(template)
+        deps.push(realTemplatePath);
         deps.push(pkg.name);
 
         if (process.env.DEVELOPER_MODE == "true") {
@@ -194,6 +195,20 @@ class Template {
         }
 
         return true;
+     }
+
+     resolveFileTemplate(template, projectPath) {
+         const fileRegex = /^file:/;
+         const match = fileRegex.test(template);
+         const relPath = path.relative(projectPath, process.cwd());
+
+         if (match) {
+            const templatePath = template.substring(5);
+
+            return "file:" + path.join(relPath, templatePath);
+         }
+
+         return template;
      }
 }
 

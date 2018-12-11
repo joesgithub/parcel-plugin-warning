@@ -1,5 +1,18 @@
 {
-  "npmClient": "npm",
+  "version": "independent",
   "packages": ["packages/*"],
-  "version": "independant"
+  "npmClient": "yarn",
+  "useWorkspaces": true,
+  "command": {
+    "create": {
+      "license": "MIT"
+    },
+    "publish": {
+      "allowBranch": "master",
+      "bump": "patch",
+      "conventionalCommits": true
+    }
+  },
+  "loglevel": "success",
+  "registry": "https://registry.npmjs.org/"
 }

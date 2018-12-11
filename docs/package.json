@@ -2,6 +2,12 @@
     "name": "docs",
     "version": "0.1.0",
     "private": true,
-    "dependencies": {},
-    "scripts": {}
+    "dependencies": {
+        "posthtml-expressions": "^1.1.0"
+    },
+    "scripts": {
+        "start": "pgen start",
+        "build": "pgen build",
+        "update": "pgen update"
+    }
 }
