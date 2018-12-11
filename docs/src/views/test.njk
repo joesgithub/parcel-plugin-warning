@@ -1,0 +1,17 @@
+---
+title: test
+opts:
+- 1
+- 2
+- 3
+---
+<!doctype html>
+<html lang="en">
+    <body>
+        {{ globals.test.test }}
+        {{ title }}
+        {% for opt in opts %}
+            {{ opt }}
+        {% endfor %}
+    </body>
+</html>

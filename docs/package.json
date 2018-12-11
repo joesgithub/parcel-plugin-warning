@@ -6,8 +6,12 @@
         "posthtml-expressions": "^1.1.0"
     },
     "scripts": {
-        "start": "pgen start",
+        "start": "pgen start --entry-types=html,htm,njk",
         "build": "pgen build",
         "update": "pgen update"
+    },
+    "devDependencies": {
+        "nunjucks": "^3.1.4",
+        "typescript": "^3.2.2"
     }
 }

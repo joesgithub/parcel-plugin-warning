@@ -1,0 +1,26 @@
+{
+  "name": "parcel-plugin-ssg",
+  "version": "0.1.0",
+  "description": "A parcel plugin for adding basic static site generator features",
+  "author": "chrisdmacrae <hello@chrisdmacrae.com>",
+  "homepage": "",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "consolidate": "^0.15.1",
+    "gray-matter": "^4.0.1",
+    "lodash": "^4.17.11",
+    "papaparse": "^4.6.2",
+    "parcel-bundler": "^1.10.3"
+  }
+}
