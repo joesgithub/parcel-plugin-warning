@@ -20,4 +20,4 @@ class NunjucksPackager extends Packager {
   }
 }
 
-module.exports = NunjucksAsset;
+module.exports = NunjucksPackager;

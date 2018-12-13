@@ -1,7 +1,7 @@
 {
-  "name": "parcel-plugin-njk-precompile",
+  "name": "parcel-plugin-ssg-precompile",
   "version": "0.1.0",
-  "description": "A parcel plugin for transforming .njk files into a Javascript bundle",
+  "description": "A parcel plugin for precompiling support consolidate.js engine templates",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
   "license": "MIT",

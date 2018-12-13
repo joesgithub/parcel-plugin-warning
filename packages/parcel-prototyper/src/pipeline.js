@@ -2,11 +2,12 @@
 
 const Bundler = require('parcel-bundler');
 const pluginSsg = require('parcel-plugin-ssg');
-const debug = require('debug')('parcel-bundler:pipeline');
+const pluginAssetCsv = require('parcel-plugin-asset-csv');
+const plugin404 = require('parcel-plugin-asset-404handler');
+const debug = require('debug')('parcel-prototyper:pipeline');
 
 // TODO: map to config
 const BUNDLER_OPTIONS = {
-    watch: false, // whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
     contentHash: false, // Disable content hash from being included on the filename
     scopeHoist: false, // turn on experimental scope hoisting/tree shaking flag, for smaller production bundles
     hmr: true, // Enable or disable HMR while watching
@@ -56,14 +57,18 @@ class Pipeline {
 
     addAssetTypes() {
         pluginSsg(this.bundler);
+        pluginAssetCsv(this.bundler);
+        plugin404(this.bundler);
     }
 
     addPackagers() {
-
+        // None yet!
     }
 
-    async build() {
+    async bundle() {
         let mainBundle
+
+        debug(this.bundler);
 
         try {
             mainBundle = await this.bundler.bundle();
@@ -75,13 +80,6 @@ class Pipeline {
     }
 
     /**
-     * Generates a bundle and then watches for changes and rebuilds
-     */
-    async watch() {
-        // TODO;
-    }
-
-    /**
      * Starts the watch task as well as a local development server
      * 
      * @param {Number} port 
@@ -89,7 +87,11 @@ class Pipeline {
      * @param {String} hostname 
      */
     async serve(port, https, hostname) {
-        // TODO:
+        try {
+           await this.bundler.serve(port, https, hostname);
+        } catch (error) {
+            throw error;
+        }
     }
 }
 

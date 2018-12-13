@@ -105,5 +105,11 @@ module.exports = {
         default: true,
         env: "SOURCEMAPS",
         arg: "sourcemaps"
+    },
+    watch: {
+        doc: "Enable or disables filesystem watching for automatic rebuilds",
+        format: "Boolean",
+        default: false,
+        arg: "watch"
     }
 }

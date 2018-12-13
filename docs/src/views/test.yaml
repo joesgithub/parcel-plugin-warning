@@ -1,2 +1,8 @@
 ---
-test: test
+address:
+  line1: 1 Sesame St.
+  line2: Apt-5
+  city: Charlottetown
+  province: PE
+  country: Canada
+  postal: C1A 4A8

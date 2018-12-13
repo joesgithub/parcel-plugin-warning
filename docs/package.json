@@ -6,7 +6,7 @@
         "posthtml-expressions": "^1.1.0"
     },
     "scripts": {
-        "start": "pgen start --entry-types=html,htm,njk",
+        "start": "pgen serve --entry-types=html,htm,njk",
         "build": "pgen build",
         "update": "pgen update"
     },

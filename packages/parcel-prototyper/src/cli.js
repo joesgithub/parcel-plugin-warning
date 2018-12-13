@@ -49,6 +49,10 @@ program
         'Automatically open the development server in the browser specified; defaults to the default OS browser'
     )
     .option(
+        '--entry-types',
+        'Set the allowed file types to be used as entry files; defaults to ".html", ".htm"'
+    )
+    .option(
         '-e, --entry-dir',
         'Set the entry directory relative to the project; defaults to the "src"'
     )
@@ -88,20 +92,12 @@ program
     .command('build')
     .description('Generate a production build')
     .option(
-        '-p, --port <port>',
-        'Set the port the development server binds to'
+        '-w, --watch',
+        'Watches filesystem for changes and triggers a rebuild'
     )
     .option(
-        '-h, --hostname',
-        'Set the hostname the development server binds to'
-    )
-    .option(
-        '--https',
-        'Enable HTTPs for the development server'
-    )
-    .option(
-        '--open [browser]',
-        'Automatically open the development server in the browser specified; defaults to the default OS browser'
+        '--entry-types',
+        'Set the allowed file types to be used as entry files; defaults to ".html", ".htm"'
     )
     .option(
         '-e, --entry-dir',
@@ -173,78 +169,60 @@ program.parse(args);
 
 async function bundle(main, command) {
     // Require libraries here to make commands faster
+    const Config = require('./config');
+    const getEntryFiles = require('./utils/getEntryFiles');
+    const Pipeline = require('./pipeline');
     const path = require('path');
-    const cmd = command ? command : main;
-    const action = cmd.name();
+    const Template = require('./template');
 
     try {
-        const Config = require('./config');
-        const getEntryFiles = require('./utils/getEntryFiles');
-        const Pipeline = require('./pipeline');
-        const Template = require('./template');
-        const configOpts = {};
+        const config = new Config();
+        const cmd = command ? command : main;
+        const action = cmd.name();
+        const configOpts = config.get();
 
-        // Setup command paramaters for specific actions
+        // Override configOpts for specific actions
         switch (action) {
             case "init":
-                // TODO:
                 configOpts.cwd = path.resolve(process.cwd(), main);
                 break;
             case "update":
-                // TODO:
+                configOpts.cwd = path.resolve(process.cwd(), main);
                 break;
             case "build":
                 configOpts.env = "production"
                 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-            case "watch":
-                // TODO:
-                configOpts.watch = true
                 break;
             case "serve":
-                // TODO:
                 configOpts.watch = true
                 break;
         }
 
-        const config = new Config(configOpts);
-        const entryFiles = getEntryFiles(config.get('dirs.views'), config.get('entryTypes'));
-        const template = new Template({
-            projectPath: config.get('cwd'),
-            template: config.get('template')
-        })
-        const pipeline = new Pipeline({
-            entryFiles: entryFiles,
-            outDir: config.get('dirs.out'),
-            publicUrl: config.get('publicUrl'),
-            cache: config.get('cache'),
-            cacheDir: config.get('dirs.cache'),
-            logLevel: config.get('logLevel'),
-            sourceMaps: config.get('sourceMaps')
-        });
+        configOpts.entryFiles = getEntryFiles(configOpts.dirs.views, configOpts.entryTypes);
+        const template = new Template(configOpts)
+        const pipeline = new Pipeline(configOpts);
 
         // Execute action
         switch (action) {
             case "init":
-                await template.bootstrap(config.get('dirs.entry'), command.template, main);
+                await template.bootstrap(configOpts.dirs.entry, command.template, main);
             break;
             case "update":
-                await template.update(config.get('dirs.entry'), command.template, main);
+                await template.update(configOpts.dirs.entry, command.template, main);
             break;
             case "build":
-                await pipeline.build();
-            break;
-            case "watch":
-                await pipeline.watch();
+                await pipeline.bundle();
             break;
             case "serve":
                 await pipeline.serve(
-                    config.get('port'),
-                    config.get('https'),
-                    config.get('hostname')
+                    configOpts.port,
+                    configOpts.https,
+                    configOpts
                 );
             break;
         }
     } catch (error) {
-        console.log(error);
+        //console.log(error);
+        //console.log(error().stack);
     }
 }

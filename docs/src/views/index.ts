@@ -1,3 +1,3 @@
-console.log(
-    'success'
-)
+const sheet = require('./sheet.csv');
+
+console.log(sheet)

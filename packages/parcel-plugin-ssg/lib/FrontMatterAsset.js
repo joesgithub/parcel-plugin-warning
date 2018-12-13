@@ -3,7 +3,7 @@
 const config = require('parcel-bundler/src/utils/config');
 const DataFiles = require('./DataFiles');
 const debug = require('debug')('parcel-plugin-ssg:FrontMatterAsset');
-const HTMLAsset = require('parcel-bundler/src/assets/HTMLAsset');
+const FourOhFourAsset = require('parcel-plugin-asset-404handler/lib/404Asset');
 const matter = require('gray-matter');
 const path = require('path');
 const _ = require('lodash');
@@ -11,7 +11,7 @@ const _ = require('lodash');
 /**
  * Extends HTMLAsset to add front matter support to the built-in HTMLAsset
  */
-class FrontMatterAsset extends HTMLAsset {
+class FrontMatterAsset extends FourOhFourAsset {
     constructor(name, options) {
         super(name, options)
     }
@@ -32,6 +32,7 @@ class FrontMatterAsset extends HTMLAsset {
     async parseFrontMatter(content) {
       const parsed = matter(content);
       this.frontMatter = parsed.data;
+      this.rawContent = parsed.content;
 
       return parsed.content;
     }
@@ -64,7 +65,7 @@ class FrontMatterAsset extends HTMLAsset {
           let cfg = await config.load(opts.path || this.name, filenames);
 
           if (typeof cfg === "function") {
-              cfg = cfg({frontMatter: this.frontMatter, globals: this.globals});
+              cfg = cfg({frontmatter: this.frontMatter, globals: this.globals});
           }
 
           return cfg;

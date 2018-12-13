@@ -1,7 +1,7 @@
 {
-  "name": "parcel-plugin-htmlasset-404s",
+  "name": "parcel-plugin-asset-404handler",
   "version": "0.1.0",
-  "description": "Parcel plugin that allows 404s to occur to other assets inside of a HTML asset",
+  "description": "Parcel plugin that allows broken assets to occur with warnings",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
   "license": "MIT",

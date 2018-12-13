@@ -20,4 +20,4 @@ class CSVAsset extends Asset {
   }
 }
 
-module.exports = JSONAsset;
+module.exports = CSVAsset;

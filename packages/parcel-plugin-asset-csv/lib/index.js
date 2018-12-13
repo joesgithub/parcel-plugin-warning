@@ -1,7 +1,5 @@
 'use strict';
 
-module.exports = parcelPluginAssetCsv;
-
-function parcelPluginAssetCsv() {
-    // TODO
-}
+module.exports = (bundler) => {
+  bundler.addAssetType('csv', require.resolve('./CSVAsset'));
+};

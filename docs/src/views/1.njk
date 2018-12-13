@@ -1,5 +1,9 @@
 ---
 title: test
+opts:
+- 1
+- 2
+- 3
 ---
 <!doctype html>
 <html lang="en">
@@ -16,6 +20,11 @@ title: test
                 {{ globals.test.address.postal }}
             </dd>
         </dl>
-        <script src="./index.ts"></script>
+        <a href="MVA_7_8.do">Should break</a>
+        <ul>
+        {% for opt in opts %}
+            <li>{{ opt }}</li>
+        {% endfor %}
+        </ul>
     </body>
 </html>
