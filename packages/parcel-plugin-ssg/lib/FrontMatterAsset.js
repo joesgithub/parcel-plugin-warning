@@ -1,6 +1,6 @@
 'use strict';
 
-const config = require('parcel-bundler/src/utils/config');
+const config = require('parcel-bundler/lib/utils/config');
 const DataFiles = require('./DataFiles');
 const debug = require('debug')('parcel-plugin-ssg:FrontMatterAsset');
 const FourOhFourAsset = require('parcel-plugin-asset-404handler/lib/404Asset');

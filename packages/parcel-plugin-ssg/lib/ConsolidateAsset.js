@@ -3,7 +3,7 @@
 const debug = require('debug')('parcel-plugin-ssg:ConsolidateAsset')
 const extMap = require('./utils/extMap');
 const FrontMatterAsset = require('./FrontMatterAsset');
-const localRequire = require('parcel-bundler/src/utils/localRequire');
+const localRequire = require('parcel-bundler/lib/utils/localRequire');
 const moduleMap = require('./utils/moduleMap');
 const path = require('path');
 

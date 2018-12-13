@@ -5,9 +5,9 @@
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "bin/index.js",
   "bin": {
-    "pgen": "bin/index.js"
+    "pgen": "bin/cli.js"
   },
   "directories": {
     "lib": "lib",
@@ -26,7 +26,9 @@
     "commander": "^2.19.0",
     "convict": "^4.4.0",
     "cross-spawn": "^6.0.5",
+    "crossroads": "^0.12.2",
     "fs-extra": "^7.0.1",
+    "hasher": "^1.2.0",
     "localforage": "^1.7.3",
     "parcel-bundler": "^1.10.3",
     "parcel-plugin-asset-404handler": "^0.1.0",

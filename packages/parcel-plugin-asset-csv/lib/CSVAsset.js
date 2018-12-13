@@ -1,6 +1,6 @@
-const Asset = require('parcel-bundler/src/Asset');
+const Asset = require('parcel-bundler/lib/Asset');
 const Papa = require('papaparse');
-const serializeObject = require('parcel-bundler/src/utils/serializeObject');
+const serializeObject = require('parcel-bundler/lib/utils/serializeObject');
 
 class CSVAsset extends Asset {
   constructor(name, options) {

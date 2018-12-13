@@ -1,6 +1,6 @@
 "use strict";
 
-const fs = require('parcel-bundler/src/utils/fs');
+const fs = require('parcel-bundler/lib/utils/fs');
 const glob = require('glob');
 const json5 = require('json5');
 const path = require('path');

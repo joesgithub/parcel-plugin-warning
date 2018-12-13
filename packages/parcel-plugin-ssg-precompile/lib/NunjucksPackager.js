@@ -1,7 +1,7 @@
 'use strict';
 
 const debug = require('debug')('parcel-plugin-njk-precompile')
-const Packager = require('parcel-bundler/src/packagers/Packager');
+const Packager = require('parcel-bundler/lib/packagers/Packager');
 const Nunjucks = require('nunjucks');
 const path = require('path');
 
