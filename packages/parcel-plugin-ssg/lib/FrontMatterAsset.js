@@ -25,14 +25,33 @@ class FrontMatterAsset extends FourOhFourAsset {
     }
 
     /**
+     * Adds a js bundle for the front matter and global data
+     * @param {*} content 
+     */
+    async postProcess(generated) {
+      const mainAssets = await super.postProcess(generated);
+      const dataAsset = {
+        type: 'json',
+        value: JSON.stringify(this.templateVars)
+      }
+      const allAssets = mainAssets.concat([dataAsset]);
+
+      return allAssets
+    }
+
+    /**
      * Parses front matter from content string
      * 
      * @param {String} content 
      */
     async parseFrontMatter(content) {
       const parsed = matter(content);
+      const combinedData = parsed.data || {};
+          combinedData.globals = this.globals;
+
       this.frontMatter = parsed.data;
       this.rawContent = parsed.content;
+      this.templateVars = combinedData;
 
       return parsed.content;
     }
@@ -61,12 +80,14 @@ class FrontMatterAsset extends FourOhFourAsset {
           if (opts.load === false) {
             return conf;
           }
-    
+
+          // Begin patch
           let cfg = await config.load(opts.path || this.name, filenames);
 
           if (typeof cfg === "function") {
-              cfg = cfg({frontmatter: this.frontMatter, globals: this.globals});
+              cfg = cfg({locals: this.templateVars});
           }
+          // End patch
 
           return cfg;
         }

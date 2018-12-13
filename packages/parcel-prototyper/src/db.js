@@ -8,23 +8,25 @@ const DB_CONFIG = {
 }
 
 class LocalDatabase {
-    constructor(name) {
-        const opts = DB_CONFIG;
+    constructor(router, opts) {
+        const config = DB_CONFIG;
 
-        if (name) {
-            opts.name = name;
+        if (opts && opts.name) {
+            config.name = name;
         }
 
-        this.db = LocalForage.createInstance(opts);
+        this.db = LocalForage.createInstance(config);
+        this.router = router;
         this.length = 0;
+        this.addEventListeners();
     }
 
     async set(key, value) {
         try {
-            const value = await this.db.setItem(key, value);
+            const output = await this.db.setItem(key, value);
             this.length = await this.db.length();
             
-            return value;
+            return output;
         } catch (error) {
             throw error;
         }
@@ -54,6 +56,38 @@ class LocalDatabase {
         } catch (error) {
             throw error
         }
+    }
+
+    processForm(e) {
+        if (e.preventDefault) e.preventDefault();
+
+        const form = e.target || e.currentTarget;
+        const formData = new FormData(form);
+        const target = form.getAttribute('target') || window.location.href;
+
+        for (var pair of formData.entries()) {
+            const name = pair[0];
+            const value = pair[1];
+
+            this.set(name, value);
+        }
+
+        if (this.router) {
+            this.router.navigate(target);
+        }
+
+        // You must return false to prevent the default form behavior
+        return false;
+    }
+
+    addEventListeners() {
+        window.addEventListener('load', () => {
+            const forms = document.querySelectorAll('form');
+
+            for (var form of forms) {
+                form.addEventListener('submit', this.processForm.bind(this))
+            }
+        })
     }
 }
 

@@ -3,7 +3,6 @@
 const Bundler = require('parcel-bundler');
 const pluginSsg = require('parcel-plugin-ssg');
 const pluginAssetCsv = require('parcel-plugin-asset-csv');
-const plugin404 = require('parcel-plugin-asset-404handler');
 const debug = require('debug')('parcel-prototyper:pipeline');
 
 // TODO: map to config
@@ -58,7 +57,6 @@ class Pipeline {
     addAssetTypes() {
         pluginSsg(this.bundler);
         pluginAssetCsv(this.bundler);
-        plugin404(this.bundler);
     }
 
     addPackagers() {

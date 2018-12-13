@@ -1,8 +1,4 @@
 const Router = require('parcel-prototyper').Router;
+const Database = require('parcel-prototyper').Database;
 const router = new Router();
-
-router.add('/index.html', function() {
-    router.navigate('/test.html');
-});
-
-router.exec();
+const db = new Database(router);
