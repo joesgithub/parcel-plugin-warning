@@ -31,7 +31,7 @@ class Template {
 
         try {
             this.createProject(projectPath);
-            this.normalizeProjectPackage();
+            this.normalizeProjectPackage(projectPath);
             await this.installDependencies(template, projectPath);
             await this.copyTemplateToProject(entryPath, projectPath);
         } catch (error) {
