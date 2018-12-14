@@ -1,8 +1,9 @@
 "use strict";
 
 const Bundler = require('parcel-bundler');
-const pluginSsg = require('parcel-plugin-ssg');
 const pluginAssetCsv = require('parcel-plugin-asset-csv');
+const pluginSsg = require('parcel-plugin-ssg');
+const pluginSsgPrecompile = require('parcel-plugin-ssg-precompile');
 const debug = require('debug')('parcel-prototyper:pipeline');
 
 // TODO: map to config
@@ -55,8 +56,9 @@ class Pipeline {
     }
 
     addAssetTypes() {
-        pluginSsg(this.bundler);
         pluginAssetCsv(this.bundler);
+        pluginSsg(this.bundler);
+        pluginSsgPrecompile(this.bundler);
     }
 
     addPackagers() {

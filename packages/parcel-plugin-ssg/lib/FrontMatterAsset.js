@@ -21,11 +21,12 @@ class FrontMatterAsset extends FourOhFourAsset {
       this.globals = await this.loadGlobals(this.options.rootDir);
 
       // Parse front matter and return content
-      return await this.parseFrontMatter(await super.load())
+      this.rawContent = await this.parseFrontMatter(await super.load());
+      return this.rawContent;
     }
 
     /**
-     * Adds a js bundle for the front matter and global data
+     * Adds a json output for the front matter and global data
      * @param {*} content 
      */
     async postProcess(generated) {
@@ -50,7 +51,6 @@ class FrontMatterAsset extends FourOhFourAsset {
           combinedData.globals = this.globals;
 
       this.frontMatter = parsed.data;
-      this.rawContent = parsed.content;
       this.templateVars = combinedData;
 
       return parsed.content;

@@ -15,5 +15,9 @@
   ],
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "nunjucks": "^3.1.6",
+    "parcel-plugin-ssg": "^0.1.0"
   }
 }
