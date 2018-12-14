@@ -177,9 +177,12 @@ async function bundle(main, command) {
     const Template = require('./template');
 
     try {
-        const config = new Config();
         const cmd = command ? command : main;
         const action = cmd.name();
+        const cwd = (action == 'init' || action == 'update')
+            ? main
+            : undefined
+        const config = new Config({cwd: cwd});
         const configOpts = config.get();
 
         // Override configOpts for specific actions
