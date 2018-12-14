@@ -49,8 +49,6 @@ class Pipeline {
 
     handleBuildError(error) {
         if (error) {
-            console.log(error.trace);
-
             throw error;
         }
     }

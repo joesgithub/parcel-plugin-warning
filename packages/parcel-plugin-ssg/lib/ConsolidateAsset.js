@@ -35,7 +35,6 @@ class ConsolidateAsset extends FrontMatterAsset {
         
         // Automatically install engine module if it's not found. We need 
         // to do this before requiring consolidate so that it's available.
-        const engineOptions = {};
         const engineModule = await localRequire(this.engineModule, this.name);
         const consolidate = require('consolidate');
 
@@ -47,11 +46,11 @@ class ConsolidateAsset extends FrontMatterAsset {
         }
 
         output = await consolidate[this.engine](this.name, Object.assign(options, this.frontMatter, {globals: this.globals}));
+
+        return await this.parseFrontMatter(output);
     } catch (error) {
       throw new Error(error);
     }
-
-    return await this.parseFrontMatter(output);
   }
 
   resolveEngine(ext) {
@@ -84,7 +83,6 @@ class ConsolidateAsset extends FrontMatterAsset {
   }
 
   resolvePartials(engine) {
-      const exts = extMap[engine];
       // TODO:
   }
 }

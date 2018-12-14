@@ -17,6 +17,9 @@ module.exports = (bundler) => {
                 case ".njk":
                     bundler.addAssetType(ext, require.resolve('./NunjucksAsset'));
                     break;
+                case ".nunjucks":
+                    bundler.addAssetType(ext, require.resolve('./NunjucksAsset'));
+                    break;
                 default:
                     bundler.addAssetType(ext, require.resolve('./ConsolidateAsset'));
                     break;

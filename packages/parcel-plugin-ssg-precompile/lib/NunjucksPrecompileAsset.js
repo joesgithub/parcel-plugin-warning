@@ -12,7 +12,7 @@ class NunjucksPrecompileAsset extends NunjucksAsset {
     async postProcess(generated) {
         try {
             const mainAssets = await super.postProcess(generated);
-            const precompiled = await this.precompile(this.rawGenerated);
+            const precompiled = await this.precompile();
             const precompileAsset = {
                 type: 'js',
                 value: precompiled
@@ -26,17 +26,32 @@ class NunjucksPrecompileAsset extends NunjucksAsset {
       }
 
       /**
-       * Precompiles a nunjucks template string
+       * Precompiles a nunjucks asset
        * 
-       * @param {String} string 
        */
-      async precompile(string) {
-        // Automatically install engine module if it's not found. We need 
-        // to do this before requiring consolidate so that it's available.
+      async precompile() {
+        const trueContent = this.contents;
+        const trueAst = this.ast;
+        this.contents = this.rawContents;
+        this.ast = undefined;
+
+        await super.pretransform(true);
+        await super.parseIfNeeded();
+        await super.transform();
+        const generated = await this.generate();
+        const result = await super.postProcess(generated);
+        const contents = result[0].value;
+
+        debug(contents);
+
+        // Automatically install Nunjucks if it's not found.
         const Nunjucks = await localRequire(this.engineModule, this.name);
-        const precompiled = Nunjucks.precompileString(string, {
+        const precompiled = Nunjucks.precompileString(contents, {
             name: this.name
         });
+
+        this.contents = trueContent;
+        this.ast = trueAst;
 
         return precompiled
       }

@@ -11,17 +11,16 @@ const _ = require('lodash');
  * Extends HTMLAsset to add front matter support to the built-in HTMLAsset
  */
 class FrontMatterAsset extends FourOhFourAsset {
-  constructor(name, options) {
-    super(name, options)
-  }
-
   async load() {
-    // Load global data into class scope
-    this.globals = await this.loadGlobals(this.options.rootDir);
+    try {
+      const content = await super.load();
+      this.globals = await this.loadGlobals(this.options.rootDir);
+      this.rawContents = await this.parseFrontMatter(content);
 
-    // Parse front matter and return content
-    this.rawContent = await this.parseFrontMatter(await super.load());
-    return this.rawContent;
+      return this.rawContents;
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**

@@ -3,10 +3,7 @@
 const debug = require('debug')('parcel-plugin-asset-404handler');
 const fs = require('fs');
 const HTMLAsset = require('parcel-bundler/lib/assets/HTMLAsset');
-const isURL = require('parcel-bundler/lib/utils/is-url');
 const logger = require('parcel-bundler/lib/Logger');
-const path = require('path');
-const URL = require('url');
 
 /**
  * PLEASE BE AWARE:
