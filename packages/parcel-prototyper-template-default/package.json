@@ -1,17 +1,15 @@
 {
   "name": "parcel-prototyper-template-default",
   "version": "0.1.2",
-  "description": "> TODO: description",
+  "description": "The default template for parcel-prototyper",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
-  "license": "ISC",
-  "main": "null",
+  "license": "MIT",
   "directories": {
-    "lib": "lib",
-    "test": "__tests__"
+    "src": "src"
   },
   "files": [
-    "lib"
+    "src"
   ],
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"

@@ -7,6 +7,7 @@ const glob = require('glob');
 const npmInstall = require('./utils/npmInstall');
 const path = require('path');
 const pkg = require('../package.json');
+const resolve = require('resolve');
 
 class Template {
     /**
@@ -121,9 +122,8 @@ class Template {
         try {
             const projectPkg = require(getFromProject('package.json', projectPath));
             const template = this.resolveTemplateDependency(projectPkg) || this.template;
-            const nodeModulesPath = getFromProject('node_modules', projectPath);
-            const templatePath = path.resolve(nodeModulesPath, template);
-            const templateSrcPath = path.resolve(templatePath, 'src');
+            const templatePath = resolve.sync(template, {baseDir: projectPath});
+            const templateSrcPath = path.resolve(path.basename(templatePath), 'src');
             const pattern = path.join(templateSrcPath, '**/*');
             const templateFiles = await glob.sync(pattern);
 
