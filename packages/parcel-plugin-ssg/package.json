@@ -1,6 +1,6 @@
 {
   "name": "parcel-plugin-ssg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A parcel plugin for adding basic static site generator features",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
@@ -22,6 +22,6 @@
     "lodash": "^4.17.11",
     "papaparse": "^4.6.2",
     "parcel-bundler": "^1.10.3",
-    "parcel-plugin-asset-404handler": "^0.1.0"
+    "parcel-plugin-asset-404handler": "^0.1.1"
   }
 }

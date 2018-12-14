@@ -1,6 +1,6 @@
 {
   "name": "parcel-prototyper",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "> TODO: description",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
@@ -32,10 +32,10 @@
     "hasher": "^1.2.0",
     "localforage": "^1.7.3",
     "parcel-bundler": "^1.10.3",
-    "parcel-plugin-asset-404handler": "^0.1.0",
-    "parcel-plugin-asset-csv": "^0.1.0",
-    "parcel-plugin-ssg": "^0.1.0",
-    "parcel-plugin-ssg-precompile": "^0.1.0",
+    "parcel-plugin-asset-404handler": "^0.1.1",
+    "parcel-plugin-asset-csv": "^0.1.1",
+    "parcel-plugin-ssg": "^0.1.1",
+    "parcel-plugin-ssg-precompile": "^0.1.1",
     "rimraf": "^2.6.2"
   }
 }
