@@ -121,7 +121,7 @@ class Template {
         try {
             const projectPkg = require(getFromProject('package.json', projectPath));
             const template = this.resolveTemplateDependency(projectPkg) || this.template;
-            const templatePath = require.resolve('parcel-prototyper', {paths: [path.resolve(process.cwd(), projectPath)]});
+            const templatePath = require.resolve(template, {paths: [path.resolve(process.cwd(), projectPath)]});
             const templateSrcPath = path.resolve(path.basename(templatePath), 'src');
             const pattern = path.join(templateSrcPath, '**/*');
             const templateFiles = await glob.sync(pattern);
