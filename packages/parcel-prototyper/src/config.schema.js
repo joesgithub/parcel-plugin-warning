@@ -70,13 +70,6 @@ module.exports = {
             env: "ENTRY_DIR",
             arg: "entry-dir"
         },
-        views: {
-            doc: "The folder where views/entrypoints are stored",
-            format: "String",
-            default: "views",
-            env: "VIEWS_DIR",
-            arg: "views-dir"
-        },
         cache: {
             doc: "The folder where the cache files are stored",
             format: "String",

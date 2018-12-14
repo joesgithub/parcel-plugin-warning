@@ -102,9 +102,9 @@ class Template {
             projectPkg.scripts = {}
         }
 
-        projectPkg.scripts.start = 'pgen start';
-        projectPkg.scripts.build = 'pgen build';
-        projectPkg.scripts.update = 'pgen update';
+        projectPkg.scripts.start = 'parcel-prototyper start';
+        projectPkg.scripts.build = 'parcel-prototyper build';
+        projectPkg.scripts.update = 'parcel-prototyper update';
 
         debug('Writing `package.json` to: %s', projectPkgPath);
         fs.writeFileSync(projectPkgPath, JSON.stringify(projectPkg, null, 4));

@@ -173,6 +173,7 @@ async function bundle(main, command) {
     const getEntryFiles = require('./utils/getEntryFiles');
     const Pipeline = require('./pipeline');
     const path = require('path');
+    const rimraf = require('rimraf');
     const Template = require('./template');
 
     try {
@@ -198,7 +199,7 @@ async function bundle(main, command) {
                 break;
         }
 
-        configOpts.entryFiles = getEntryFiles(configOpts.dirs.views, configOpts.entryTypes);
+        configOpts.entryFiles = getEntryFiles(configOpts.dirs.entry, configOpts.entryTypes);
         const template = new Template(configOpts)
         const pipeline = new Pipeline(configOpts);
 
@@ -211,6 +212,8 @@ async function bundle(main, command) {
                 await template.update(configOpts.dirs.entry, command.template, main);
             break;
             case "build":
+                rimraf.sync(configOpts.dirs.out);
+                rimraf.sync(configOpts.dirs.cache);
                 await pipeline.bundle();
             break;
             case "serve":
@@ -222,7 +225,6 @@ async function bundle(main, command) {
             break;
         }
     } catch (error) {
-        //console.log(error);
-        //console.log(error().stack);
+        console.log(error);
     }
 }

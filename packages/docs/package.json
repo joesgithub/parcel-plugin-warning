@@ -9,9 +9,9 @@
     "posthtml-expressions": "^1.1.0"
   },
   "scripts": {
-    "start": "pgen serve --entry-types=html,htm,njk",
-    "build": "pgen build",
-    "update": "pgen update"
+    "start": "parcel-prototyper serve --entry-types=html,htm,njk",
+    "build": "parcel-prototyper build",
+    "update": "parcel-prototyper update"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",

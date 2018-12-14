@@ -35,6 +35,7 @@
     "parcel-plugin-asset-404handler": "^0.1.0",
     "parcel-plugin-asset-csv": "^0.1.0",
     "parcel-plugin-ssg": "^0.1.0",
-    "parcel-plugin-ssg-precompile": "^0.1.0"
+    "parcel-plugin-ssg-precompile": "^0.1.0",
+    "rimraf": "^2.6.2"
   }
 }
