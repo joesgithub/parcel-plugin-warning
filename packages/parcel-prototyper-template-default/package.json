@@ -5,6 +5,7 @@
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
   "license": "MIT",
+  "main": "src/",
   "directories": {
     "src": "src"
   },

@@ -60,6 +60,8 @@ function exec(command, args, opts) {
         }
 
         debug('Ran: %s', cmdString);
+
+        return true;
     } catch (error) {
         throw error;
     }
