@@ -1,11 +1,11 @@
 {
   "name": "docs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "debug": "^4.1.0",
-    "parcel-prototyper": "^0.1.1",
-    "parcel-prototyper-template-default": "^0.1.1",
+    "parcel-prototyper": "^0.1.4",
+    "parcel-prototyper-template-default": "^0.1.2",
     "posthtml-expressions": "^1.1.0"
   },
   "scripts": {
