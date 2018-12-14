@@ -2,7 +2,7 @@
 
 const DataFiles = require('./DataFiles');
 const debug = require('debug')('parcel-plugin-ssg:FrontMatterAsset');
-const FourOhFourAsset = require('parcel-plugin-asset-404handler/lib/404Asset');
+const FourOhFourAsset = require('parcel-plugin-asset-fourohfour/lib/404Asset');
 const matter = require('gray-matter');
 const path = require('path');
 const _ = require('lodash');
@@ -31,7 +31,7 @@ class FrontMatterAsset extends FourOhFourAsset {
     const mainAssets = await super.postProcess(generated);
     const dataAsset = {
       type: 'json',
-      value: JSON.stringify(this.templateVars)
+      value: JSON.stringify(this.templateVars, null, 2)
     }
     const allAssets = mainAssets.concat([dataAsset]);
 

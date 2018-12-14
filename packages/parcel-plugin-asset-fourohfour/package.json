@@ -1,6 +1,6 @@
 {
-  "name": "parcel-plugin-asset-404handler",
-  "version": "0.1.1",
+  "name": "parcel-plugin-asset-fourohfour",
+  "version": "0.1.2",
   "description": "Parcel plugin that allows broken assets to occur with warnings",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
@@ -15,5 +15,6 @@
   ],
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
-  }
+  },
+  "gitHead": "f136bcfefff214f1af2842a92bc1da98d5741809"
 }

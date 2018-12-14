@@ -5,4 +5,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## 0.1.1 (2018-12-14)
 
-**Note:** Version bump only for package parcel-plugin-asset-404handler
+**Note:** Version bump only for package parcel-plugin-asset-fourohfour

@@ -1,6 +1,6 @@
 "use strict";
 
-const debug = require('debug')('parcel-plugin-asset-404handler');
+const debug = require('debug')('parcel-plugin-asset-fourohfour');
 const fs = require('fs');
 const HTMLAsset = require('parcel-bundler/lib/assets/HTMLAsset');
 const logger = require('parcel-bundler/lib/Logger');

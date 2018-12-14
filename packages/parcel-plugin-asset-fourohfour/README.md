@@ -1,4 +1,4 @@
-# `parcel-plugin-asset-404handler`
+# `parcel-plugin-asset-fourohfour`
 
 > A parcel plugin that prevents 404s in HTMLAssets to cause a build failure, instead outputting warnings.
 
@@ -7,7 +7,7 @@
 Add the plugin to your project as a dependency:
 
 ```
-npm install parcel-plugin-asset-404handler --save
+npm install parcel-plugin-asset-fourohfour --save
 ```
 
 Then continue using Parcel as normal

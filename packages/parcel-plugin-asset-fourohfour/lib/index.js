@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('parcel-plugin-asset-404handler');
+const debug = require('debug')('parcel-plugin-asset-fourohfour');
 
 module.exports = (bundler) => {
   bundler.addAssetType('html', require.resolve("./404Asset"));
