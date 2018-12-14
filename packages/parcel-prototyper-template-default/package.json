@@ -15,5 +15,8 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "gitHead": "f136bcfefff214f1af2842a92bc1da98d5741809"
+  "gitHead": "f136bcfefff214f1af2842a92bc1da98d5741809",
+  "dependencies": {
+    "normalize-path": "^3.0.0"
+  }
 }

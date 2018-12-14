@@ -6,6 +6,7 @@ const getFromProject = require('./utils/getFromProject');
 const glob = require('glob');
 const npmInstall = require('./utils/npmInstall');
 const path = require('path');
+const pathNormalize = require('normalize-path');
 const pkg = require('../package.json');
 
 class Template {
@@ -127,8 +128,8 @@ class Template {
             const templateFiles = await glob.sync(pattern);
 
             for (var key in templateFiles) {
-                const templateFilePath = templateFiles[key];
-                const templateRelPath = path.normalize(templateFilePath.replace(templateSrcPath, './'));
+                const templateFilePath = pathNormalize(templateFiles[key]);
+                const templateRelPath = path.normalize(templateFilePath.replace(pathNormalize(templateSrcPath), './'));
                 const projectTemplatePath = path.resolve(entryPath, templateRelPath);
                 const isDirectory = fs.lstatSync(templateFilePath).isDirectory();
 

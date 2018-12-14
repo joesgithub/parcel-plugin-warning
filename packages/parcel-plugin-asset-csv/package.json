@@ -17,6 +17,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "normalize-path": "^3.0.0",
     "papaparse": "^4.6.2"
   },
   "gitHead": "f136bcfefff214f1af2842a92bc1da98d5741809"

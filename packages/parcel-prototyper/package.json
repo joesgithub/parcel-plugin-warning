@@ -35,6 +35,7 @@
     "fs-extra": "^7.0.1",
     "hasher": "^1.2.0",
     "localforage": "^1.7.3",
+    "normalize-path": "^3.0.0",
     "parcel-bundler": "^1.10.3",
     "parcel-plugin-asset-csv": "^0.1.2",
     "parcel-plugin-asset-fourohfour": "^0.1.3",

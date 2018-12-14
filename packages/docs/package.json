@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "debug": "^4.1.0",
+    "normalize-path": "^3.0.0",
     "parcel-prototyper": "^0.1.9",
     "parcel-prototyper-template-default": "^0.1.5",
     "posthtml-expressions": "^1.1.0"
