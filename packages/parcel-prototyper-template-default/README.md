@@ -1,11 +1,13 @@
 # `parcel-prototyper-template-default`
 
-> TODO: description
+> The default template for parcel prototyper
 
 ## Usage
 
 ```
-const parcelPrototyperTemplateDefault = require('parcel-prototyper-template-default');
-
-// TODO: DEMONSTRATE API
+npx parcel-prototyper init my-prototype --template=parcel-prototyper-template-default
 ```
+
+## What's included?
+
+- TODO:

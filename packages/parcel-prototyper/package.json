@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "bin/index.js",
   "bin": {
-    "pgen": "bin/cli.js"
+    "parcel-prototyper": "bin/cli.js"
   },
   "directories": {
     "lib": "lib",
@@ -19,7 +19,8 @@
   "scripts": {
     "build": "npx babel src --out-dir lib",
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "debug": "npx babel-node ./src/index.js"
+    "debug": "npx babel-node ./src/index.js",
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "chalk": "^2.4.1",

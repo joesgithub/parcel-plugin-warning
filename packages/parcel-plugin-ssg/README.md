@@ -1,6 +1,6 @@
 # `parcel-plugin-ssg`
 
-> TAdds basic static site generator functionality to Parcel
+> Adds basic static site generator functionality to Parcel
 
 Tries to supports _any_ [consolidate.js](https://github.com/tj/consolidate.js/) template engine on top of the built-in [PostHTML](https://parceljs.org/html.html#posthtml) functionality. See [official support](#official-support) for guaranteed support.
 
@@ -12,7 +12,7 @@ Add the plugin to your project as a dependency:
 npm install parcel-plugin-ssg posthtml-expressions --save
 ```
 
-If you don't already have a PostHTML config in your project, add `posthtml.config.js` to the root of your project with the following contents:
+Update or add a `posthtml.config.js` to the root of your project with the following contents:
 
 ```
 module.exports = (ctx) => {
