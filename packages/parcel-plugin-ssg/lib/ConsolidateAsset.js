@@ -41,9 +41,6 @@ class ConsolidateAsset extends FrontMatterAsset {
 
         // Configure engine options
         switch (this.engine) {
-            case "nunjucks":
-                consolidate.requires[this.engine] = engineModule.configure();
-                break;
             default:
                 consolidate.requires[this.engine] = engineModule;
                 break;

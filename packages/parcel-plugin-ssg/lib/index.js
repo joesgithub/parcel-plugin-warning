@@ -5,15 +5,22 @@ const extMap = require('./utils/extMap');
 
 module.exports = (bundler) => {
     // Strip front matter from HTML
-    bundler.addAssetType('html', require.resolve('./FrontMatterAsset'));
-    bundler.addAssetType('htm', require.resolve('./FrontMatterAsset'));
+    bundler.addAssetType('html', require.resolve('./HTMLAsset'));
+    bundler.addAssetType('htm', require.resolve('./HTMLAsset'));
 
     // Add all acceptable consolidate engines
     for (var engine in extMap) {
         const exts = extMap[engine];
 
         exts.forEach((ext) => {
-            bundler.addAssetType(ext, require.resolve('./ConsolidateAsset'));
+            switch (ext) {
+                case ".njk":
+                    bundler.addAssetType(ext, require.resolve('./NunjucksAsset'));
+                    break;
+                default:
+                    bundler.addAssetType(ext, require.resolve('./ConsolidateAsset'));
+                    break;
+            }
         })
     }
 };
