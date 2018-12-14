@@ -1,6 +1,6 @@
 {
   "name": "parcel-plugin-asset-csv",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A parcel plugin for adding .csv asset support",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
