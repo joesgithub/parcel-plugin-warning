@@ -8,22 +8,23 @@ const logger = require('parcel-bundler/lib/Logger');
 /**
  * PLEASE BE AWARE:
  * This is a fairly fragile patch and if not maintained could very easily
- * break dependency resolution for HTMLAssets.
+ * break dependency resolution for CSSAssets.
  */
 class FourOhFourAsset extends CSSAsset {
-    addDependency(name, opts) {
-        let exists
+  addDependency(name, opts) {
+    let exists
+    const hasExt = name.indexOf('.') > -1;
 
-        if (opts.resolved) {
-            exists = fs.existsSync(opts.resolved);
-        }
+    if (opts && opts.resolved) {
+      exists = fs.existsSync(opts.resolved);
+    }
 
-        if (exists || !opts.resolved) {
-            this.dependencies.set(name, Object.assign({name}, opts));
-        } else {
-            logger.warn(`Dependency ${name} not resolved in ${this.name}`);
-        }
-      }
+    if (exists || !hasExt) {
+      this.dependencies.set(name, Object.assign({ name }, opts));
+    } else {
+      logger.warn(`Dependency ${name} not resolved in ${this.name}`);
+    }
+  }
 }
 
 module.exports = FourOhFourAsset;
