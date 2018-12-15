@@ -2,7 +2,7 @@
 
 const DataFiles = require('./DataFiles');
 const debug = require('debug')('parcel-plugin-ssg:FrontMatterAsset');
-const FourOhFourAsset = require('parcel-plugin-asset-fourohfour/lib/404Asset');
+const FourOhFourAsset = require('parcel-plugin-asset-fourohfour/lib/HTML404Asset');
 const matter = require('gray-matter');
 const path = require('path');
 const _ = require('lodash');
