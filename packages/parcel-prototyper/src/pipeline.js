@@ -2,6 +2,7 @@
 
 const Bundler = require('parcel-bundler');
 const pluginAssetCsv = require('parcel-plugin-asset-csv');
+const pluginFourOhFour = require('parcel-plugin-asset-fourohfour');
 const pluginSsg = require('parcel-plugin-ssg');
 const pluginSsgPrecompile = require('parcel-plugin-ssg-precompile');
 const debug = require('debug')('parcel-prototyper:pipeline');
@@ -62,6 +63,7 @@ class Pipeline {
     }
 
     addAssetTypes() {
+        pluginFourOhFour(this.bundler);
         pluginAssetCsv(this.bundler);
         pluginSsg(this.bundler);
         pluginSsgPrecompile(this.bundler);
