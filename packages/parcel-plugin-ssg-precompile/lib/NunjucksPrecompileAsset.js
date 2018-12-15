@@ -44,9 +44,7 @@ class NunjucksPrecompileAsset extends NunjucksAsset {
 
         debug(contents);
 
-        // Automatically install Nunjucks if it's not found.
-        const Nunjucks = await localRequire(this.engineModule, this.name);
-        const precompiled = Nunjucks.precompileString(contents, {
+        const precompiled = this.env.precompileString(contents, {
             name: this.name
         });
 
