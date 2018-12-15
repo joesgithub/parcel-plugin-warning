@@ -181,7 +181,7 @@ async function bundle(main, command) {
         const action = cmd.name();
         const cwd = (action == 'init' || action == 'update')
             ? main
-            : undefined
+            : process.cwd();
         const config = new Config({cwd: cwd});
         const configOpts = config.get();
 
