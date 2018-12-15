@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.9](https://github.com/parcel-prototyper/parcel-prototyper/compare/docs@0.1.8...docs@0.1.9) (2018-12-15)
+
+**Note:** Version bump only for package docs
+
+
+
+
+
 ## [0.1.8](https://github.com/parcel-prototyper/parcel-prototyper/compare/docs@0.1.7...docs@0.1.8) (2018-12-14)
 
 **Note:** Version bump only for package docs
