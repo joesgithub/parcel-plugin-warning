@@ -77,6 +77,8 @@ class Template {
 
         if (!fs.existsSync(projectPkgPath)) {
             projectPkg = {}
+        } else {
+            projectPkg = require(projectPkgPath);
         }
 
         projectPkg.name = projectName;
