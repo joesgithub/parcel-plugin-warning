@@ -177,8 +177,7 @@ async function bundle(main, command) {
     const Template = require('./template');
 
     try {
-        const cmd = command ? command : main;
-        const action = cmd.name();
+        const action = typeof command.name === "function" ? command.name() : main.name();
         const cwd = (action == 'init' || action == 'update')
             ? main
             : process.cwd();
