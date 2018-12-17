@@ -1,6 +1,6 @@
 {
   "name": "parcel-plugin-ssg-precompile",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "A parcel plugin for precompiling support consolidate.js engine templates",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
@@ -19,7 +19,7 @@
   "dependencies": {
     "normalize-path": "^3.0.0",
     "nunjucks": "^3.1.6",
-    "parcel-plugin-ssg": "^0.1.12"
+    "parcel-plugin-ssg": "^0.1.13"
   },
   "gitHead": "787359467f29cbd0ea21838d886b486f535301bd"
 }
