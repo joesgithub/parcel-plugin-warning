@@ -37,7 +37,7 @@ program
         'Set the port the development server binds to'
     )
     .option(
-        '-h, --hostname',
+        '-h, --hostname <hostname>',
         'Set the hostname the development server binds to'
     )
     .option(
@@ -49,27 +49,23 @@ program
         'Automatically open the development server in the browser specified; defaults to the default OS browser'
     )
     .option(
-        '--entry-types',
+        '--entry-types <...entry-types>',
         'Set the allowed file types to be used as entry files; defaults to ".html", ".htm"'
     )
     .option(
-        '-e, --entry-dir',
+        '-e, --entry-dir <entry-dir>',
         'Set the entry directory relative to the project; defaults to the "src"'
     )
     .option(
-        '-d, --out-dir',
+        '-d, --out-dir <out-dir>',
         'Set the output directory.'
     )
     .option(
-        '--views-dir',
-        'Set the views directory; defaults to "src"'
-    )
-    .option(
-        '--cache-dir',
+        '--cache-dir <cache-dir>',
         'Set the cache directory; defaults to ".cache"'
     )
     .option(
-        '-p, --public-url',
+        '-p, --public-url <public-url>',
         'Set the public URL to serve from; defaults to "/"'
     )
     .option(
@@ -81,7 +77,7 @@ program
         'Disable sourcemaps'
     )
     .option(
-        '--log-level',
+        '--log-level <log-level>',
         'Set the log level; 0 (no output), 1 (errors), 2 (warnings), 3 (info), 4 (verbose), 5 (debug, generates a log file)',
         /^([0-5])$/
     )
@@ -96,27 +92,23 @@ program
         'Watches filesystem for changes and triggers a rebuild'
     )
     .option(
-        '--entry-types',
+        '--entry-types <...entry-types>',
         'Set the allowed file types to be used as entry files; defaults to ".html", ".htm"'
     )
     .option(
-        '-e, --entry-dir',
+        '-e, --entry-dir <entry-dir>',
         'Set the entry directory relative to the project; defaults to "src"'
     )
     .option(
-        '-d, --out-dir',
+        '-d, --out-dir <out-dir>',
         'Set the output directory.'
     )
     .option(
-        '--views-dir',
-        'Set the views directory; defaults to "src"'
-    )
-    .option(
-        '--cache-dir',
+        '--cache-dir <cache-dir>',
         'Set the cache directory; defaults to ".cache"'
     )
     .option(
-        '-p, --public-url',
+        '-p, --public-url <public-url>',
         'Set the public URL to serve from; defaults to "/"'
     )
     .option(
@@ -128,7 +120,7 @@ program
         'Disable sourcemaps'
     )
     .option(
-        '--log-level',
+        '--log-level <log-level>',
         'Set the log level; 0 (no output), 1 (errors), 2 (warnings), 3 (info), 4 (verbose), 5 (debug, generates a log file)',
         /^([0-5])$/
     )
@@ -162,7 +154,7 @@ program
 var args = process.argv;
 if (args[2] === '--help' || args[2] === '-h') args[2] = 'help';
 if (!args[2] || !program.commands.some(c => c.name() === args[2])) {
-  args.splice(2, 0, 'serve');
+    args.splice(2, 0, 'serve');
 }
 
 program.parse(args);
@@ -177,11 +169,13 @@ async function bundle(main, command) {
     const Template = require('./template');
 
     try {
-        const action = typeof command.name === "function" ? command.name() : main.name();
+        const action = command && typeof command.name === "function"
+            ? command.name()
+            : main.name();
         const cwd = (action == 'init' || action == 'update')
             ? main
             : process.cwd();
-        const config = new Config({cwd: cwd});
+        const config = new Config({ cwd: cwd });
         const configOpts = config.get();
 
         // Override configOpts for specific actions
@@ -209,22 +203,22 @@ async function bundle(main, command) {
         switch (action) {
             case "init":
                 await template.bootstrap(configOpts.dirs.entry, command.template, main);
-            break;
+                break;
             case "update":
                 await template.update(configOpts.dirs.entry, command.template, main);
-            break;
+                break;
             case "build":
                 rimraf.sync(configOpts.dirs.out);
                 rimraf.sync(configOpts.dirs.cache);
                 await pipeline.bundle();
-            break;
+                break;
             case "serve":
                 await pipeline.serve(
                     configOpts.port,
                     configOpts.https,
                     configOpts
                 );
-            break;
+                break;
         }
     } catch (error) {
         console.log(error);
