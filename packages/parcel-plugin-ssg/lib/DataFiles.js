@@ -3,6 +3,7 @@
 const fs = require('parcel-bundler/lib/utils/fs');
 const glob = require('glob');
 const json5 = require('json5');
+const logger = require('parcel-bundler/src/Logger');
 const path = require('path');
 const Papa = require('papaparse');
 const toml = require('toml');
@@ -15,7 +16,7 @@ class DataFiles {
 
     async getFilePaths(dir) {
         dir = dir || this.dir;
-        const pattern = path.join(dir, "**/*.{csv,json,yml,yaml,toml,js}");
+        const pattern = path.join(dir, "**/*.{csv,json,yml,yaml,toml}"); // TODO: add JS support
         const files = glob.sync(pattern);
 
         return files;
@@ -43,35 +44,55 @@ class DataFiles {
     }
 
     async loadJS(path) {
-        const data = require(path);
+        try {
+            const data = require(path);
 
-        if (typeof data !== "function") {
-            return data
+            if (typeof data !== "function") {
+                return data
+            }
+        } catch (error) {
+            logger.warn(`Could not process data file ${path}`);
         }
     }
 
     async loadJSON(path) {
-       const data = await fs.readFile(path, 'utf-8');
+        try { 
+            const data = await fs.readFile(path, 'utf-8');
 
-       return json5.parse(data);
+            return json5.parse(data);
+        } catch (error) {
+            logger.warn(`Could not process data file ${path}`);
+        }
     }
 
     async loadYAML(path) {
-        const data = await fs.readFile(path, 'utf-8');
+        try {
+            const data = await fs.readFile(path, 'utf-8');
         
-        return yaml.safeLoad(data);
+            return yaml.safeLoad(data);
+        } catch (error) {
+            logger.warn(`Could not process data file ${path}`);
+        }
     }
 
     async loadTOML(path) {
-        const data = await fs.readFile(path, 'utf-8');
+        try {
+            const data = await fs.readFile(path, 'utf-8');
 
-        return toml.parse(data);
+            return toml.parse(data);
+        } catch (error) {
+            logger.warn(`Could not process data file ${path}`);
+        }
     }
 
     async loadCSV(path) {
-        const data = await fs.readFile(path, 'utf-8');
+        try {
+            const data = await fs.readFile(path, 'utf-8');
 
-        return Papa.parse(data).data;
+            return Papa.parse(data).data;
+        } catch (error) {
+            logger.warn(`Could not process data file ${path}`);
+        }
     }
 }
 
