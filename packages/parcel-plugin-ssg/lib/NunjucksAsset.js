@@ -32,7 +32,7 @@ class NunjucksAsset extends FrontMatterAsset {
                     new Nunjucks.FileSystemLoader(this.options.rootDir)
                 );
 
-                rhis.env.addGlobal('globals', this.globals);
+                this.env.addGlobal('globals', this.globals);
 
                 for (var key in this.frontMatter) {
                     this.env.addGlobal(key, this.frontMatter[key]);
