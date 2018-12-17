@@ -1,6 +1,6 @@
 {
   "name": "parcel-plugin-ssg",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "A parcel plugin for adding basic static site generator features",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
