@@ -1,6 +1,7 @@
 "use strict";
 
 const debug = require('debug')('parcel-plugin-ssg-precompile:NunjucksPrecompileAsset');
+const localRequire = require('parcel-bundler/lib/utils/localRequire');
 const NunjucksAsset = require('parcel-plugin-ssg/lib/NunjucksAsset');
 
 class NunjucksPrecompileAsset extends NunjucksAsset {
