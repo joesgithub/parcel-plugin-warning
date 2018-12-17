@@ -25,20 +25,11 @@ class NunjucksAsset extends FrontMatterAsset {
             if (!precompile) {
                 let output;
 
-                // Automatically install engine module if it's not found. We need 
-                // to do this before requiring consolidate so that it's available.
+                // Automatically install engine module if it's not found.
                 const Nunjucks = await localRequire(this.engineModule, this.name);
-                this.env = new Nunjucks.Environment(
-                    new Nunjucks.FileSystemLoader(this.options.rootDir)
-                );
+                const env = this.configureNunjucks(Nunjucks);
 
-                this.env.addGlobal('globals', this.globals);
-
-                for (var key in this.frontMatter) {
-                    this.env.addGlobal(key, this.frontMatter[key]);
-                }
-
-                output = this.env.renderString(this.contents);
+                output = env.renderString(this.contents);
 
                 debug(output);
 
@@ -53,6 +44,19 @@ class NunjucksAsset extends FrontMatterAsset {
 
     resolvePartials(engine) {
         // TODO:
+    }
+
+    configureNunjucks(nunjucks) {
+        const loader = new Nunjucks.FileSystemLoader(this.options.rootDir);
+        const env = new nunjucks.Environment(loader);
+
+        for (var key in this.frontMatter) {
+            env.addGlobal(key, this.frontMatter[key]);
+        }
+
+        env.addGlobal('globals', this.globals);
+
+        return env;
     }
 }
 

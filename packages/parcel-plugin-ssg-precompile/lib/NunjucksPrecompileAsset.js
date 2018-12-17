@@ -1,7 +1,6 @@
 "use strict";
 
 const debug = require('debug')('parcel-plugin-ssg-precompile:NunjucksPrecompileAsset');
-const localRequire = require('parcel-bundler/lib/utils/localRequire');
 const NunjucksAsset = require('parcel-plugin-ssg/lib/NunjucksAsset');
 
 class NunjucksPrecompileAsset extends NunjucksAsset {
@@ -44,7 +43,10 @@ class NunjucksPrecompileAsset extends NunjucksAsset {
 
         debug(contents);
 
-        const precompiled = this.env.precompileString(contents, {
+        // Automatically install engine module if it's not found.
+        const Nunjucks = await localRequire(this.engineModule, this.name);
+        const env = this.configureNunjucks(Nunjucks);
+        const precompiled = Nunjucks.precompileString(contents, {
             name: this.name
         });
 
