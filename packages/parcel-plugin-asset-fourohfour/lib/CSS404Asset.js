@@ -20,7 +20,7 @@ class FourOhFourAsset extends CSSAsset {
     }
 
     if (exists || !hasExt) {
-      this.dependencies.set(name, Object.assign({ name }, opts));
+      super.addDependency(name, opts);
     } else {
       logger.warn(`Dependency ${name} not resolved in ${this.name}`);
     }

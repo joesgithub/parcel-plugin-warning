@@ -50,11 +50,7 @@ class Config {
             const val = dirs[k];
             let resolvedVal;
             
-            if (['entry', 'out', 'cache'].indexOf(k) > -1) {
-                resolvedVal = path.resolve(cwd, val);
-            } else {
-                resolvedVal = path.resolve(cwd, entryPath, val);
-            }
+            resolvedVal = path.resolve(cwd, val);
 
             debug('Resolving dir %s from %s to %s', k, val, resolvedVal);
 

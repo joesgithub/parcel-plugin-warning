@@ -13,8 +13,9 @@ const _ = require('lodash');
 class FrontMatterAsset extends FourOhFourAsset {
   async load() {
     try {
+      const dataDir = this.options.prototyper ? this.options.prototyper.dirs.data : this.options.rootDir;
       const content = await super.load();
-      this.globals = await this.loadGlobals(this.options.rootDir);
+      this.globals = await this.loadGlobals(dataDir);
       this.rawContents = await this.parseFrontMatter(content);
 
       return this.rawContents;
@@ -44,14 +45,18 @@ class FrontMatterAsset extends FourOhFourAsset {
    * @param {String} content 
    */
   async parseFrontMatter(content) {
-    const parsed = matter(content);
-    const combinedData = parsed.data || {};
-    combinedData.globals = this.globals;
+    try {
+      const parsed = matter(content);
+      const combinedData = parsed.data || {};
+      combinedData.globals = this.globals;
 
-    this.frontMatter = parsed.data;
-    this.templateVars = combinedData;
+      this.frontMatter = parsed.data;
+      this.templateVars = combinedData;
 
-    return parsed.content;
+      return parsed.content;
+    } catch (error) {
+      throw error
+    }
   }
 
   async loadGlobals(dir) {

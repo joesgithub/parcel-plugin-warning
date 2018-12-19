@@ -1,6 +1,10 @@
 "use strict";
 
 const Bundler = require('parcel-bundler');
+const fs = require('fs-extra');
+const glob = require('glob');
+const path = require('path');
+const pathNormalize = require('normalize-path');
 const pluginAssetCsv = require('parcel-plugin-asset-csv');
 const pluginFourOhFour = require('parcel-plugin-asset-fourohfour');
 const pluginSsg = require('parcel-plugin-ssg');
@@ -8,9 +12,8 @@ const pluginSsgPrecompile = require('parcel-plugin-ssg-precompile');
 const debug = require('debug')('parcel-prototyper:pipeline');
 
 class Pipeline {
-
     /**
-     * @param {Object} opts A valid parcel bundler configuration object
+     * @param {Object} opts A valid parcel-prototyper config object
      */
     constructor(opts) {
         const bundlerOptions = {
@@ -34,12 +37,13 @@ class Pipeline {
         };
         this.entryFiles = opts.entryFiles;
         this.bundler = new Bundler(this.entryFiles, bundlerOptions);
+        this.bundler.options.prototyper = opts;
         this.addAssetTypes();
 
-        this.bundler.on('bundled', this.handleBundled);
-        this.bundler.on('buildStart', this.handleBuildStart);
-        this.bundler.on('buildEnd', this.handleBuildEnd);
-        this.bundler.on('buildError', this.handleBuildError);
+        this.bundler.on('bundled', this.handleBundled.bind(this));
+        this.bundler.on('buildStart', this.handleBuildStart.bind(this));
+        this.bundler.on('buildEnd', this.handleBuildEnd.bind(this));
+        this.bundler.on('buildError', this.handleBuildError.bind(this));
 
         debug('Bundler options: %o', bundlerOptions)
     }
@@ -54,6 +58,10 @@ class Pipeline {
 
     handleBuildEnd() {
         debug('Bundle complete');
+        this.copyStatic(
+            this.bundler.options.prototyper.dirs.static,
+            this.bundler.options.prototyper.dirs.out    
+        );
     }
 
     handleBuildError(error) {
@@ -97,6 +105,27 @@ class Pipeline {
     async serve(port, https, hostname) {
         try {
            await this.bundler.serve(port, https, hostname);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+     * Copies the contents of dirs.static to dirs.output
+     * 
+     * @param {String} staticPath 
+     */
+    async copyStatic(staticPath, outDir) {    
+        try {
+            const staticFiles = glob.sync(path.join(staticPath, "**/*"));
+
+            for (var key in staticFiles) {
+                const staticFilePath = pathNormalize(staticFiles[key]);
+                const staticRelPath = path.normalize(staticFilePath.replace(pathNormalize(staticPath), './'));
+                const outPath = path.resolve(outDir, staticRelPath);
+
+                fs.copySync(staticFilePath, outPath);
+            }
         } catch (error) {
             throw error;
         }

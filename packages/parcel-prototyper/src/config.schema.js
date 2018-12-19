@@ -66,9 +66,23 @@ module.exports = {
         entry: {
             doc: "The project's entry path",
             format: "String",
-            default: "src",
+            default: "src/views/",
             env: "ENTRY_DIR",
             arg: "entry-dir"
+        },
+        data: {
+            doc: "The directory data files should be read from",
+            format: "String",
+            default: "src/data",
+            env: "DATA_DIR",
+            arg: "data-dir"
+        },
+        static: {
+            doc: "The directory static files to be copied over as-is are stored",
+            format: "String",
+            default: "src/public/",
+            env: "PUBLIC_DIR",
+            arg: "public-dir"
         },
         cache: {
             doc: "The folder where the cache files are stored",
