@@ -169,13 +169,11 @@ async function bundle(main, command) {
     const Template = require('./template');
 
     try {
-        const action = command && typeof command.name === "function"
-            ? command.name()
-            : main.name();
-        const cwd = (action == 'init' || action == 'update')
-            ? main
-            : process.cwd();
-        const config = new Config({ cwd: cwd });
+        const cmd = command && typeof command.name === "function"
+            ? command
+            : main;
+        const action = cmd.name()
+        const config = new Config();
         const configOpts = config.get();
 
         // Override configOpts for specific actions
