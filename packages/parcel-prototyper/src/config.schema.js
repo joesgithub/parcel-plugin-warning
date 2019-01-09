@@ -80,9 +80,9 @@ module.exports = {
         static: {
             doc: "The directory static files to be copied over as-is are stored",
             format: "String",
-            default: "src/public/",
-            env: "PUBLIC_DIR",
-            arg: "public-dir"
+            default: "src/static/",
+            env: "STATIC_DIR",
+            arg: "static-dir"
         },
         cache: {
             doc: "The folder where the cache files are stored",
