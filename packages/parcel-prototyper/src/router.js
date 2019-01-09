@@ -34,17 +34,13 @@ class Router {
         window.location.replace(path);
     }
 
-    add(path, callback, priority) {
-        const route = this.createRoute(path, callback, priority);
+    add(path, callback, priority = 0) {
+        const route = this.router.addRoute(path, callback, priority);
 
         // TODO: make this better
         route.switched.add(console.log, console);
 
         return route;
-    }
-
-    createRoute(path, callback, priority = 0) {
-        return this.router.addRoute(path, callback, priority);
     }
 
     removeRoute(route) {

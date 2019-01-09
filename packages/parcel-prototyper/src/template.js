@@ -167,6 +167,14 @@ class Template {
   }
 
   /**
+   * Executs the `main` script of a template package if it exists
+   * 
+   */
+  async runTemplateScript() {
+    // TODO
+  }
+
+  /**
    * Uses NPM to install all dependencies
    *
    * @param {String} template A valid "name" of a template package

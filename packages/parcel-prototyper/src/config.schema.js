@@ -66,7 +66,7 @@ module.exports = {
         entry: {
             doc: "The project's entry path",
             format: "String",
-            default: "src/views/",
+            default: "src/assets/",
             env: "ENTRY_DIR",
             arg: "entry-dir"
         },

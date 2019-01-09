@@ -2,9 +2,6 @@
 
 const Bundler = require('parcel-bundler');
 const fs = require('fs-extra');
-const glob = require('glob');
-const path = require('path');
-const pathNormalize = require('normalize-path');
 const pluginAssetCsv = require('parcel-plugin-asset-csv');
 const pluginFourOhFour = require('parcel-plugin-asset-fourohfour');
 const pluginSsg = require('parcel-plugin-ssg');
@@ -50,6 +47,11 @@ class Pipeline {
 
     handleBundled(bundle) {
         debug('Bundle complete: %o', bundle);
+
+        this.copyStatic(
+            this.bundler.options.prototyper.dirs.static,
+            this.bundler.options.prototyper.dirs.out    
+        );
     }
 
     handleBuildStart(entryPoints) {
@@ -58,10 +60,6 @@ class Pipeline {
 
     handleBuildEnd() {
         debug('Bundle complete');
-        this.copyStatic(
-            this.bundler.options.prototyper.dirs.static,
-            this.bundler.options.prototyper.dirs.out    
-        );
     }
 
     handleBuildError(error) {
@@ -74,7 +72,8 @@ class Pipeline {
         pluginFourOhFour(this.bundler);
         pluginAssetCsv(this.bundler);
         pluginSsg(this.bundler);
-        pluginSsgPrecompile(this.bundler);
+        // TODO: renable precompile
+        // pluginSsgPrecompile(this.bundler);
     }
 
     addPackagers() {
@@ -117,15 +116,7 @@ class Pipeline {
      */
     async copyStatic(staticPath, outDir) {    
         try {
-            const staticFiles = glob.sync(path.join(staticPath, "**/*"));
-
-            for (var key in staticFiles) {
-                const staticFilePath = pathNormalize(staticFiles[key]);
-                const staticRelPath = path.normalize(staticFilePath.replace(pathNormalize(staticPath), './'));
-                const outPath = path.resolve(outDir, staticRelPath);
-
-                fs.copySync(staticFilePath, outPath);
-            }
+            await fs.copy(staticPath, outDir);
         } catch (error) {
             throw error;
         }

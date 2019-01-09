@@ -5,6 +5,7 @@ const fs = require("fs");
 const HTMLAsset = require("parcel-bundler/lib/assets/HTMLAsset");
 const logger = require("parcel-bundler/lib/Logger");
 const path = require("path");
+const resolveUrlToFilePath = require('./utils/resolveUrlToFilePath');
 
 /**
  * PLEASE BE AWARE:
@@ -27,8 +28,6 @@ class FourOhFourAsset extends HTMLAsset {
         relPath
       );
 
-      debug(relPath, staticPath);
-
       isStatic = fs.existsSync(staticPath);
     }
 
@@ -47,15 +46,18 @@ class FourOhFourAsset extends HTMLAsset {
    */
   processSingleDependency(p, opts) {
     let shouldAdd = true;
+    const filePath = resolveUrlToFilePath(p);
 
     if (this.options.prototyper) {
-        const staticPath = path.resolve(this.options.prototyper.dirs.static, p);
+        const staticPath = path.resolve(this.options.prototyper.dirs.static, filePath);
         const exists = fs.existsSync(staticPath);
 
         if (exists) {
             shouldAdd = false;
         }
     }
+
+    debug(shouldAdd)
 
     if (shouldAdd) {
         return super.processSingleDependency(p, opts);

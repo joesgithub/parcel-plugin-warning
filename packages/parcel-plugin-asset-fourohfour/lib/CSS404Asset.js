@@ -13,15 +13,28 @@ const logger = require('parcel-bundler/lib/Logger');
 class FourOhFourAsset extends CSSAsset {
   addDependency(name, opts) {
     let exists
+    let isStatic = false;
     const hasExt = name.indexOf('.') > -1;
 
     if (opts && opts.resolved) {
       exists = fs.existsSync(opts.resolved);
     }
 
-    if (exists || !hasExt) {
+    if (!exists && opts.resolved && this.options.prototyper) {
+      const relPath = path.relative(this.options.rootDir, opts.resolved);
+      const staticPath = path.resolve(
+        this.options.prototyper.dirs.static,
+        relPath
+      );
+
+      debug(relPath, staticPath);
+
+      isStatic = fs.existsSync(staticPath);
+    }
+
+    if (exists || !hasExt || !opts.resolved) {
       super.addDependency(name, opts);
-    } else {
+    } else if (isStatic === false) {
       logger.warn(`Dependency ${name} not resolved in ${this.name}`);
     }
   }

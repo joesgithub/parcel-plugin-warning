@@ -45,13 +45,23 @@ class DataFiles {
 
     async loadJS(path) {
         try {
-            const data = require(path);
-
-            if (typeof data !== "function") {
-                return data
-            }
+            const contents = require(path);
+            
+            return this.parseJS(contents);
         } catch (error) {
             logger.warn(`Could not process data file ${path}`);
+        }
+    }
+
+    parseJS(data) {
+        switch (typeof data) {
+            case "object":
+                return data
+            case "function":
+                const returnData = data();
+                return this.parseJS(returnData);
+            default:
+                throw new Error('Invalid export')
         }
     }
 

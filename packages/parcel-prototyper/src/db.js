@@ -74,6 +74,8 @@ class LocalDatabase {
 
         if (this.router) {
             this.router.navigate(target);
+        } else {
+            window.location.assign(target);
         }
 
         // You must return false to prevent the default form behavior
