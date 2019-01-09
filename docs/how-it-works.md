@@ -6,11 +6,11 @@ It extends Parcel Bundler by adding features commonly seen in static site genera
 
 It works in 5 steps:
 
-1. A global data object is assembled from data files
+1. A global data object is assembled from [data files](./features/data-files.md)
 2. An asset tree is constructed and assets are processed
 3. A bundle tree is constructed and bundles are generated
 4. Bundles are packaged and output
-5. Static files are then copied over
+5. Static assets are then copied over
 
 For details on how steps 2, 3, and 4 work see the [Parcel documentation](TODO: link).
 
