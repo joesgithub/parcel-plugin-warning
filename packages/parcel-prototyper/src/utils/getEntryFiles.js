@@ -3,8 +3,7 @@
 const path = require('path');
 
 module.exports = (srcDir, entryTypes) => {
-    const entryGlobs = entryTypes.map((type) => path.join(srcDir, `**/*.${type}`));
-          entryGlobs.push('!_**/_*');
+    const entryPatterns = entryTypes.map((type) => path.join(srcDir, type));
 
-    return entryGlobs
+    return entryPatterns
 }

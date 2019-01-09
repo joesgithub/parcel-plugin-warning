@@ -30,7 +30,7 @@ program
     .action(bundle);
 
 program
-    .command('serve')
+    .command('serve [entry...]')
     .description('Start a development server and watch for changes')
     .option(
         '-p, --port <port>',
@@ -47,10 +47,6 @@ program
     .option(
         '--open [browser]',
         'Automatically open the development server in the browser specified; defaults to the default OS browser'
-    )
-    .option(
-        '--entry-types <...entry-types>',
-        'Set the allowed file types to be used as entry files; defaults to ".html", ".htm"'
     )
     .option(
         '-e, --entry-dir <entry-dir>',
@@ -85,15 +81,11 @@ program
     .action(bundle);
 
 program
-    .command('build')
+    .command('build [entry...]')
     .description('Generate a production build')
     .option(
         '-w, --watch',
         'Watches filesystem for changes and triggers a rebuild'
-    )
-    .option(
-        '--entry-types <...entry-types>',
-        'Set the allowed file types to be used as entry files; defaults to ".html", ".htm"'
     )
     .option(
         '-e, --entry-dir <entry-dir>',
@@ -175,6 +167,8 @@ async function bundle(main, command) {
         const action = cmd.name()
         const config = new Config();
         const configOpts = config.get();
+        let template;
+        let pipeline;
 
         // Override configOpts for specific actions
         switch (action) {
@@ -187,15 +181,21 @@ async function bundle(main, command) {
             case "build":
                 configOpts.env = "production"
                 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+                configOpts.entries = main.length > 0
+                    ? main
+                    : configOpts.entries;
                 break;
             case "serve":
                 configOpts.watch = true
+                configOpts.entries = main.length > 0
+                    ? main
+                    : configOpts.entries;
                 break;
         }
 
-        configOpts.entryFiles = getEntryFiles(configOpts.dirs.entry, configOpts.entryTypes);
-        const template = new Template(configOpts)
-        const pipeline = new Pipeline(configOpts);
+        configOpts.entryFiles = getEntryFiles(configOpts.dirs.entry, configOpts.entries);
+        template = new Template(configOpts)
+        pipeline = new Pipeline(configOpts);
 
         // Execute action
         switch (action) {

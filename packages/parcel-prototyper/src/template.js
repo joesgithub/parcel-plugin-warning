@@ -25,7 +25,7 @@ class Template {
    *
    * @param {String} entryPath The entry path for a project template
    * @param {String} template A valid "name" of a template package
-   * @param {String} projectPath
+   * @param {String} projectPath The root path of the project
    */
   async bootstrap(entryPath, template, projectPath) {
     projectPath = projectPath || this.projectPath;
@@ -45,8 +45,8 @@ class Template {
    * Reinitializes a project from its template
    *
    * @param {String} entryPath The entry path for a project template
-   * @param {String} projectPath
    * @param {String} template A valid "name" of a template package
+   * @param {String} projectPath
    */
   async update(entryPath, template, projectPath) {
     projectPath = projectPath || this.projectPath;

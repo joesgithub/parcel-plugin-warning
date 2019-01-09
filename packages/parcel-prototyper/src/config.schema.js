@@ -34,12 +34,10 @@ module.exports = {
         default: process.cwd(),
         arg: "cwd"
     },
-    entryTypes: {
+    entries: {
         doc: "Valid file types for entrypoints",
         format: "Array",
-        default: ['html', 'htm', 'njk'],
-        env: "ENTRY_TYPES",
-        arg: "entry-types"
+        default: ['**/*.html', '**/*.htm', '**/*.njk', '**/*.nunjucks'],
     },
     publicUrl: {
         doc: "The url or base path the bundles are served from; defaults to \"/\"",
