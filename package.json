@@ -18,5 +18,10 @@
     ],
     "dependencies": {
         "jest": "^23.6.0"
+    },
+    "scripts": {
+        "publish": "npx lerna publish",
+        "run": "npx lerna run",
+        "exec": "npx lerna exec"
     }
 }
