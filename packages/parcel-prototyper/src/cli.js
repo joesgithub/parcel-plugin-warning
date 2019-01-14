@@ -127,20 +127,16 @@ program
     .command('help [command]')
     .description('Display help for all or specified commands')
     .action((command) => {
-        let cmd = program.commands.find((c) => c.name() === command || program);
+        let cmd;
+
+        for (var i in program.commands) {
+            cmd = (program.commands[i].name() === command)
+                ? program.commands[i]
+                : program
+        }
+
         cmd.help();
     });
-
-program
-    .on('--help', () => {
-        console.log('');
-        console.log(
-            '  Run `' +
-            'pgen help <command>' +
-            '` for more information on specific commands'
-        );
-        console.log('');
-    })
 
 // Make serve the default command except for --help
 var args = process.argv;
