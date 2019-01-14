@@ -102,8 +102,8 @@ class Template {
             const templateConfig = Object.assign(
                 this.config,
                 {
-                    addScripts: this.addScripts,
-                    addDependencies: this.addDependencies
+                    addScripts: this.addScripts.bind(this),
+                    addDependencies: this.addDependencies.bind(this)
                 }
             )
 
@@ -112,7 +112,7 @@ class Template {
 
             switch (typeof entry) {
                 case "function":
-                    entryData = entry(templateConfig);
+                    entryData = await entry(templateConfig);
                     break;
                 case "object":
                     entryData = entry;
