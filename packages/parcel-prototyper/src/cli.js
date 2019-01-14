@@ -18,6 +18,11 @@ program
         '-t, --template <template>',
         'Override the default project template'
     )
+    .option(
+        '--log-level <log-level>',
+        'Set the log level; 0 (no output), 1 (errors), 2 (warnings), 3 (info), 4 (verbose), 5 (debug, generates a log file)',
+        /^([0-5])$/
+    )
     .action(bundle);
 
 program
@@ -26,6 +31,11 @@ program
     .option(
         '-t, --template <template>',
         'Override the default project template'
+    )
+    .option(
+        '--log-level <log-level>',
+        'Set the log level; 0 (no output), 1 (errors), 2 (warnings), 3 (info), 4 (verbose), 5 (debug, generates a log file)',
+        /^([0-5])$/
     )
     .action(bundle);
 
@@ -165,7 +175,9 @@ async function bundle(main, command) {
         const cwd = action == "init" || action == "update"
             ? path.resolve(process.cwd(), main)
             : process.cwd();
-        const config = new Config({cwd: cwd});
+        const config = new Config({
+            cwd: cwd
+        });
         const configOpts = config.get();
         let template;
         let pipeline;
@@ -173,7 +185,7 @@ async function bundle(main, command) {
         // Enable developer mode
         if (process.env.DEVELOPER_MODE == "true") {
             configOpts.DEVELOPER_MODE = true;
-            configOpts.verbose = true;
+            configOpts.logLevel = 5;
         }
 
         // Override configOpts for specific actions

@@ -4,6 +4,7 @@ const debug = require("debug")("parcel-prototyper:template");
 const fs = require("fs-extra");
 const getFromProject = require("./utils/getFromProject");
 const glob = require("glob");
+const logger = require("parcel-bundler/lib/Logger");
 const npmInstall = require("./utils/npmInstall");
 const path = require("path");
 const pathNormalize = require("normalize-path");
@@ -95,9 +96,11 @@ class Template {
 
     try {
         if (fs.existsSync(entryPath)) {
+            
             let entryData = {};
             const entry = require(entryPath);
 
+            logger.log('Running template scripts...');
             debug('Executing template `main` script from %s', entryPath);
 
             switch (typeof entry) {
@@ -162,11 +165,12 @@ class Template {
   async addDependencies(dependencies) {
     let opts = {
       cwd: this.projectPath,
-      verbose: this.config.verbose,
+      verbose: this.config.logLevel > 3 ? true : false,
       link: this.config.DEVELOPER_MODE ? true : false
     };
 
     try {
+      logger.log('Installing dependencies...');
       await npmInstall(dependencies, opts);
 
       return true;
@@ -184,7 +188,7 @@ class Template {
         const staticFiles = glob.sync(path.join(this.config.templateDirs.static, "**/*"));
         const dataFiles = glob.sync(path.join(this.config.templateDirs.data, "**/*"));
         const copyFiles = async (files, source, destination) => {
-            debug('Copying %s to %s', source, destination);
+            logger.log(`Copying ${source} to ${destination}`);
 
             for (var key in files) {
                 const templateFilePath = pathNormalize(files[key]);
