@@ -99,13 +99,20 @@ class Template {
             
             let entryData = {};
             const entry = require(entryPath);
+            const templateConfig = Object.assign(
+                this.config,
+                {
+                    addScripts: this.addScripts,
+                    addDependencies: this.addDependencies
+                }
+            )
 
             logger.log('Running template scripts...');
             debug('Executing template `main` script from %s', entryPath);
 
             switch (typeof entry) {
                 case "function":
-                    entryData = entry(this.config);
+                    entryData = entry(templateConfig);
                     break;
                 case "object":
                     entryData = entry;
