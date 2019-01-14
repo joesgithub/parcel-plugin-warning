@@ -3,6 +3,7 @@
 const config = require('parcel-bundler/lib/utils/config');
 const debug = require('debug')('parcel-plugin-ssg:HTMLAsset');
 const FrontMatterAsset = require('./FrontMatterAsset');
+const localRequire = require('parcel-bundler/lib/utils/localRequire');
 
 class HTMLAsset extends FrontMatterAsset {
     /**
@@ -36,10 +37,18 @@ class HTMLAsset extends FrontMatterAsset {
             if (typeof cfg === "function") {
                 cfg = cfg({ locals: this.templateVars });
             }
-            // End patch
 
             return cfg;
+        } else if (filenames.indexOf('.posthtmlrc') > -1) {
+            const postHtmlExpressions = await localRequire('posthtml-expressions', this.name);
+
+            return {
+                plugins: [
+                    postHtmlExpressions({ locals: this.templateVars })
+                ]
+            }
         }
+        // End patch
 
         return null;
     }

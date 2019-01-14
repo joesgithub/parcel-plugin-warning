@@ -30,6 +30,12 @@ Now you can start using the following features:
 - [Front matter](#front-matter)
 - [Global data through data files](#global-data-through-data-files)
 
+## Output files
+
+This plugin modifies Parcel's output behaviour for supported assets that output HTML files, in order to generate valid file structures for websites.
+
+For example, while `example.html` would be output to `example.html` normally, in this case it is output as `example/index.html` to enable proper URL structures for a website.
+
 ## Consolidate.js Template Engines
 
 To use a consolidate.js compatible template engine, simply create a new asset with a valid file extension for that engine.
@@ -64,7 +70,7 @@ list:
 
 Becomes:
 
-`example.html`
+`example/index.html`
 ```
 <h1>My example page</h1>
 <p>This is my example page</p>

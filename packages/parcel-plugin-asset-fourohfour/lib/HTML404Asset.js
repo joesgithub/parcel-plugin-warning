@@ -12,7 +12,7 @@ const resolveUrlToFilePath = require('./utils/resolveUrlToFilePath');
  * This is a fairly fragile patch and if not maintained could very easily
  * break dependency resolution for HTMLAssets.
  */
-class FourOhFourAsset extends HTMLAsset {
+class HtmlFourOhFourAsset extends HTMLAsset {
   addDependency(name, opts) {
     let exists;
     let isStatic = false;
@@ -67,4 +67,4 @@ class FourOhFourAsset extends HTMLAsset {
   }
 }
 
-module.exports = FourOhFourAsset;
+module.exports = HtmlFourOhFourAsset;
