@@ -1,55 +1,92 @@
 "use strict";
 
 const debug = require('debug')('parcel-prototyper:utils:npmInstall');
-const fs = require('fs-extra');
-const getFromProject = require('./getFromProject')
 const spawn = require('cross-spawn');
+const {execSync} = require('child_process');
+
+const modes = {
+    INSTALL: 0,
+    LINK: 1
+}
+
+const clients = {
+    NPM: 0,
+    YARNPKG: 1
+}
 
 /**
  * Installs provided dependencies using Yarn or NPM
  *
- * @param {String|[String]} dependency A valid NPM dependency string
+ * @param {[String]} dependencies Any valid NPM dependencies
  */
-module.exports = async (dependency, opts) => {
-    opts = opts || {}
+module.exports = async (dependencies, opts = {}) => {
+    let mode = opts.link ? modes['LINK'] : modes['INSTALL'];
+    let client = shouldUseYarn() ? clients['YARNPKG'] : clients['NPM'];
 
     try {
-        const hasYarnLock = await fs.exists(getFromProject('yarn.lock'));
-        const useYarn = hasYarnLock && !opts.ignoreYarn;
-        const command = useYarn ? 'yarnpkg' : 'npm';
-        let args = []
+        runCommand(client, mode, dependencies, opts);
         
-        if (useYarn) {
-            args = opts.link 
-                ? args.concat(['link'])
-                : args.concat(['add']);
-         } else {
-            args = opts.link 
-                ? args.concat(['link'])
-                : args.concat(['install', '--save']);
-         }
-
-        if (opts.link) {
-            dependency.forEach((arg) => {
-                const a = args.concat(arg);
-                
-                exec(command, a, opts);
-            })
-        } else {
-            args = args.concat(dependency);
-
-            exec(command, args, opts);
-        }
-
         return true
     } catch (error) {
         throw error;
     }
   };
 
-function exec(command, args, opts) {
+function shouldUseYarn() {
     try {
-        const cmdString = `${command} ${args.join(' ')}`;
+        execSync('yarnpkg --version', { stdio: 'ignore' });
+        return true;
+    } catch (error) {
+        return false;
+    }
+  }
+
+function runCommand(client, mode, dependencies, opts) {
+    let cmd;
+    let args = [];
+
+    switch (client) {
+        case clients['NPM']:
+            cmd = "npm";
+            args.push('install', '--save');
+
+            break;
+        case clients['YARNPKG']:
+            cmd = "yarnpkg";
+            args.push('add');
+
+            break;
+    }
+
+    switch (mode) {
+        case modes['INSTALL']:
+            args = args.concat(dependencies);
+            exec(cmd, args, opts);
+
+            break;
+        case modes['LINK']:
+            args = args.concat(dependencies);
+            exec(cmd, args, opts);
+
+            for (var index in dependencies) {
+                let linkArgs = [];
+
+                linkArgs.push('link', dependencies[index]);
+                exec(cmd, linkArgs, opts);
+            }
+
+            break;
+    }
+
+    return true;
+}
+
+function exec(command, args, opts) {
+    const cmdString = `${command} ${args.join(' ')}`;
+
+    try {
+        debug('Running: %s', cmdString);
+
         const proc = spawn.sync(command, args, {
             stdio: opts.verbose ? 'inherit' : 'ignore',
             cwd: opts.cwd || process.cwd()
@@ -58,8 +95,6 @@ function exec(command, args, opts) {
         if (proc.status !== 0) {
             throw new Error(`${cmdString} failed`);
         }
-
-        debug('Ran: %s', cmdString);
 
         return true;
     } catch (error) {

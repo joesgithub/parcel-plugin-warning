@@ -9,244 +9,275 @@ const path = require("path");
 const pathNormalize = require("normalize-path");
 const pkg = require("../package.json");
 const { prompt } = require("enquirer");
+const resolveFilesystemDependencyPath = require('./utils/resolveFilesystemDependencyPath');
 
 class Template {
   /**
-   *
-   * @param {Object} opts
+   * @param {Object} configOpts A config options object
    */
-  constructor(opts) {
-    this.projectPath = opts.projectPath;
-    this.template = opts.template;
+  constructor(configOpts) {
+    this.config = configOpts
+    this.projectPath = this.config.cwd;
+    this.template = this.getTemplateFromPackage() || configOpts.template;
+    this.templateDependency = resolveFilesystemDependencyPath(this.template, this.projectPath);
+    this.projectPkgPath = getFromProject("package.json", this.projectPath);
+    this.scripts = {
+        start: "parcel-prototyper start",
+        build: "parcel-prototyper build",
+        update: "parcel-prototyper update"
+    }
+    this.dependencies = [pkg.name, this.templateDependency];
   }
 
   /**
-   * Bootstraps a new project
-   *
-   * @param {String} entryPath The entry path for a project template
-   * @param {String} template A valid "name" of a template package
-   * @param {String} projectPath The root path of the project
+   * Creates a new project with a package.json containing a valid template configuration
    */
-  async bootstrap(entryPath, template, projectPath) {
-    projectPath = projectPath || this.projectPath;
-    template = template || this.template;
-
+  async init() {
     try {
-      this.createProject(projectPath);
-      this.normalizeProjectPackage(projectPath);
-      await this.installDependencies(template, projectPath);
-      await this.copyTemplateToProject(entryPath, projectPath);
+        this.createProject();
+        await this.addScripts(this.scripts);
+        await this.addDependencies(this.dependencies);
+        this.getPaths();
+        await this.addOrUpdateProjectFiles();
+        return await this.runTemplateScript();
     } catch (error) {
-      throw error;
+        throw error;
     }
   }
 
   /**
-   * Reinitializes a project from its template
-   *
-   * @param {String} entryPath The entry path for a project template
-   * @param {String} template A valid "name" of a template package
-   * @param {String} projectPath
+   * Updates an existing project from its template
    */
-  async update(entryPath, template, projectPath) {
-    projectPath = projectPath || this.projectPath;
-    template = template || this.template;
-
+  async update() {
     try {
-      await this.installDependencies(template, projectPath);
-      await this.copyTemplateToProject(entryPath, projectPath);
+        await this.addDependencies(this.dependencies);
+        this.getPaths();
+        await this.addOrUpdateProjectFiles();
+        return await this.runTemplateScript();
     } catch (error) {
-      throw error;
+        throw error;
     }
   }
 
   /**
-   * Generates a new project with a package.json config
-   *
-   * @param {String} projectPath
+   * Initializes a new project with a package.json
    */
-  createProject(projectPath) {
-    projectPath = projectPath || this.projectPath;
-    const projectPkgPath = getFromProject("package.json", projectPath);
-    const projectName = path.basename(projectPath);
+  createProject() {
     let projectPkg = {};
+    const projectName = path.basename(this.projectPath);
 
-    if (!fs.existsSync(projectPath)) {
-      debug("Creating project at: %s", projectPath);
-      fs.mkdirpSync(projectPath);
+    if (!fs.existsSync(this.projectPath)) {
+        debug("Creating project at: %s", this.projectPath);
+        fs.mkdirpSync(this.projectPath);
     }
 
-    if (!fs.existsSync(projectPkgPath)) {
-      projectPkg = {};
-    } else {
-      projectPkg = require(projectPkgPath);
+    if (fs.existsSync(this.projectPkgPath)) {
+        projectPkg = require(this.projectPkgPath)
     }
 
     projectPkg.name = projectName;
-    projectPkg.version = "0.1.0";
+    projectPkg.version = "1.0.0";
     projectPkg.private = true;
     projectPkg.dependencies = {};
     projectPkg.scripts = {};
 
-    debug("Writing `package.json` to: %s", projectPkgPath);
-    fs.writeFileSync(projectPkgPath, JSON.stringify(projectPkg, null, 4));
+    debug("Writing `package.json` to: %s", this.projectPkgPath);
+    return fs.writeFileSync(this.projectPkgPath, JSON.stringify(projectPkg, null, 4));
   }
 
   /**
-   * Normalizes a project package.json to include mandatory fields
-   *
-   * @param {String} projectPath
-   */
-  normalizeProjectPackage(projectPath) {
-    projectPath = projectPath || this.projectPath;
-    const projectPkgPath = getFromProject("package.json", projectPath);
-    const projectPkg = require(projectPkgPath);
-
-    if (!projectPkg.scripts) {
-      projectPkg.scripts = {};
-    }
-
-    projectPkg.scripts.start = "parcel-prototyper start";
-    projectPkg.scripts.build = "parcel-prototyper build";
-    projectPkg.scripts.update = "parcel-prototyper update";
-
-    debug("Writing `package.json` to: %s", projectPkgPath);
-    fs.writeFileSync(projectPkgPath, JSON.stringify(projectPkg, null, 4));
-  }
-
-  /**
-   * Copies the contents of a template package's `src` folder into the project
-   *
-   * @param {String} projectPath
-   */
-  async copyTemplateToProject(entryPath, projectPath) {
-    projectPath = projectPath || this.projectPath;
-
-    try {
-      const projectPkg = require(getFromProject("package.json", projectPath));
-      const template =
-        this.resolveTemplateDependency(projectPkg) || this.template;
-      const templatePath = require.resolve(template, {
-        paths: [path.resolve(process.cwd(), projectPath)]
-      });
-      const templateSrcPath = path.resolve(path.dirname(templatePath), "src");
-      const pattern = path.join(templateSrcPath, "**/*");
-      const templateFiles = await glob.sync(pattern);
-
-      for (var key in templateFiles) {
-        const templateFilePath = pathNormalize(templateFiles[key]);
-        const templateRelPath = path.normalize(
-          templateFilePath.replace(pathNormalize(templateSrcPath), "./")
-        );
-        const projectTemplatePath = path.resolve(entryPath, templateRelPath);
-        const isDirectory = fs.lstatSync(templateFilePath).isDirectory();
-        const exists = fs.existsSync(projectTemplatePath);
-        let answers = {
-          continue: false
-        };
-
-        if (isDirectory) {
-          fs.mkdirpSync(projectTemplatePath);
-        } else {
-          if (exists) {
-            answers = await prompt({
-              type: "confirm",
-              name: "continue",
-              message: `Update ${templateRelPath}?`
-            });
-          }
-
-          if (!exists || answers.continue) {
-            fs.copySync(templateFilePath, projectTemplatePath);
-          }
-        }
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  /**
-   * Executs the `main` script of a template package if it exists
-   * 
+   * Executes the logic in the template's `main` entry on the project
    */
   async runTemplateScript() {
-    // TODO
+    const templatePkg = require(this.templatePkgPath);
+    const entryRelPath = templatePkg.main;
+    const entryPath = path.resolve(this.templatePath, entryRelPath);
+
+    try {
+        if (fs.existsSync(entryPath)) {
+            let entryData = {};
+            const entry = require(entryPath);
+
+            debug('Executing template `main` script from %s', entryPath);
+
+            switch (typeof entry) {
+                case "function":
+                    entryData = entry(this.config);
+                    break;
+                case "object":
+                    entryData = entry;
+                    break;
+            }
+
+            debug('Template config %o', entryData);
+
+            if (
+                entryData.scripts
+                && typeof entryData.scripts === "object"
+            ) {
+                await this.addScripts(entryData.scripts);
+            }
+
+            if (
+                entryData.dependencies 
+                && Array.isArray(entryData.dependencies)
+                && entryData.dependencies.length > 0
+            ) {
+                await this.addDependencies(entryData.dependencies);
+            }
+
+            return true;
+        }
+    } catch (error) {
+        throw error;
+    }
   }
 
   /**
-   * Uses NPM to install all dependencies
-   *
-   * @param {String} template A valid "name" of a template package
+   * Adds one or more scripts to a package.json
+   * 
+   * @param {Object} scripts A valid NPM scripts object
    */
-  async installDependencies(template, projectPath) {
-    template = template || this.template;
-    projectPath = projectPath || this.projectPath;
+  async addScripts(scripts) {
+    const projectPkg = require(this.projectPkgPath);
 
-    const realTemplatePath = this.resolveFileTemplatePath(template, projectPath);
-    let deps = []; // TODO: auto install peerDeps?
-    let opts = {
-      cwd: projectPath,
-      verbose: true
-    };
+    for (var script in scripts) {
+        const val = scripts[script];
 
-    deps.push(realTemplatePath);
-    deps.push(pkg.name);
-
-    if (process.env.DEVELOPER_MODE == "true") {
-      opts.link = true;
+        if (typeof val === "string") {
+            debug("Adding script %s to project", script);
+            projectPkg.scripts[script] = val;
+        }
     }
 
+    debug("Writing `package.json` to: %s", this.projectPkgPath);
+    return fs.writeFileSync(this.projectPkgPath, JSON.stringify(projectPkg, null, 4));
+  }
+
+  /**
+   * Installs the dependencies to the project
+   * 
+   * @param {String[]} dependencies Array of valid NPM dependencies
+   */
+  async addDependencies(dependencies) {
+    let opts = {
+      cwd: this.projectPath,
+      verbose: this.config.verbose,
+      link: this.config.DEVELOPER_MODE ? true : false
+    };
+
     try {
-      await npmInstall(deps, opts);
+      await npmInstall(dependencies, opts);
+
+      return true;
     } catch (error) {
       throw error;
     }
-
-    return true;
   }
 
   /**
-   * Resolves the template package from the project's package.json
-   * Looks in "dependencies" and "devDependencies" for the first valid template package
-   *
-   * @param {Object} projectPkg
+   * Adds or updates the project's source files from the template
    */
-  resolveTemplateDependency(projectPkg) {
-    const dependencies = projectPkg.dependencies || [];
-    const devDependencies = projectPkg.devDependencies || [];
-    const deps = Object.assign(devDependencies, dependencies);
-    const matchExp = new RegExp(/parcel-prototyper-template-.*?/);
+  async addOrUpdateProjectFiles() {
+    try {
+        const entryFiles = glob.sync(path.join(this.config.templateDirs.entry, "**/*"));
+        const staticFiles = glob.sync(path.join(this.config.templateDirs.static, "**/*"));
+        const dataFiles = glob.sync(path.join(this.config.templateDirs.data, "**/*"));
+        const copyFiles = async (files, source, destination) => {
+            debug('Copying %s to %s', source, destination);
 
-    if (!deps) {
-      return false;
-    }
+            for (var key in files) {
+                const templateFilePath = pathNormalize(files[key]);
+                const templateRelPath = path.normalize(templateFilePath.replace(pathNormalize(source), "./"));
+                const projectTemplatePath = path.resolve(destination, templateRelPath);
+                const isDirectory = fs.lstatSync(templateFilePath).isDirectory();
+                const exists = fs.existsSync(projectTemplatePath);
+                let answers = {
+                  continue: false
+                };
+        
+                if (isDirectory) {
+                  fs.mkdirpSync(projectTemplatePath);
+                } else {
+                  if (exists) {
+                    answers = await prompt({
+                      type: "confirm",
+                      name: "continue",
+                      message: `Update ${templateRelPath}?`
+                    });
+                  }
+        
+                  if (!exists || answers.continue) {
+                    fs.copySync(templateFilePath, projectTemplatePath);
+                  }
+                }
+              }
+        }
 
-    const template = Object.keys(deps).filter(
-      dep => matchExp.exec(dep) !== null
-    );
-
-    return template[0];
+        return await Promise.all([
+            copyFiles(entryFiles, this.config.templateDirs.entry, this.config.dirs.entry),
+            copyFiles(staticFiles, this.config.templateDirs.static, this.config.dirs.static),
+            copyFiles(dataFiles, this.config.templateDirs.data, this.config.dirs.data)
+        ]);
+      } catch (error) {
+        throw error;
+      }
   }
 
   /**
-   * Resolves an filesystem NPM dependency relative from the CWD
-   * 
-   * @param {String} template 
-   * @param {String} projectPath 
+   * Resolves a project's template from it's package.json, returning the
+   * first valid match found in "dependencies" or "devDependencies"
    */
-  resolveFileTemplatePath(template, projectPath) {
-    const fileRegex = /^file:/;
-    const match = fileRegex.test(template);
-    const relPath = path.relative(projectPath, process.cwd());
+  getTemplateFromPackage() {
+    let template;
 
-    if (match) {
-      const templatePath = template.substring(5);
+    if (this.projectPkgPath) {
+        const projectPkg = require(this.projectPkgPath);
+        const dependencies = projectPkg.dependencies || {};
+        const devDependencies = projectPkg.devDependencies || {};
+        const deps = Object.assign(devDependencies, dependencies);
+        const matchExp = new RegExp(/parcel-prototyper-template-.*?/);
 
-      return "file:" + path.join(relPath, templatePath);
+        if (!deps) {
+            return false;
+        }
+
+        const templateMatches = Object.keys(deps).filter(
+            dep => matchExp.exec(dep) !== null
+        );
+
+        template = templateMatches[0];
     }
 
-    return template;
+    return template
+  }
+
+  /**
+   * Resolve the absolute path to the template in "node_modules/"
+   */
+  getTemplatePath() {
+    const templateEntryPath = require.resolve(this.template, {
+      paths: [path.resolve(process.cwd(), this.projectPath)]
+    });
+    const templatePath = path.dirname(templateEntryPath);
+
+    return templatePath;
+  }
+
+  /**
+   * Gets any paths necessary from the template and project
+   */
+  getPaths() {
+    this.templatePath = this.getTemplatePath();
+    this.templatePkgPath = path.resolve(this.templatePath, "package.json");
+    const templateDirs = {
+        entry: path.resolve(this.templatePath, "src/assets/"),
+        static: path.resolve(this.templatePath, "src/static/"),
+        data: path.resolve(this.templatePath, "src/data/")
+    }
+    this.config = Object.assign(this.config, {
+        templateDirs: templateDirs
+    })
   }
 }
 

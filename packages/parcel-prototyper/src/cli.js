@@ -160,15 +160,25 @@ async function bundle(main, command) {
     const rimraf = require('rimraf');
     const Template = require('./template');
 
+    // TODO: refactor "configOpts" to config class calls
     try {
         const cmd = command && typeof command.name === "function"
             ? command
             : main;
         const action = cmd.name()
-        const config = new Config();
+        const cwd = action == "init" || action == "update"
+            ? path.resolve(process.cwd(), main)
+            : process.cwd();
+        const config = new Config({cwd: cwd});
         const configOpts = config.get();
         let template;
         let pipeline;
+
+        // Enable developer mode
+        if (process.env.DEVELOPER_MODE == "true") {
+            configOpts.DEVELOPER_MODE = true;
+            configOpts.verbose = true;
+        }
 
         // Override configOpts for specific actions
         switch (action) {
@@ -200,10 +210,10 @@ async function bundle(main, command) {
         // Execute action
         switch (action) {
             case "init":
-                await template.bootstrap(configOpts.dirs.entry, command.template, main);
+                await template.init();
                 break;
             case "update":
-                await template.update(configOpts.dirs.entry, command.template, main);
+                await template.update();
                 break;
             case "build":
                 rimraf.sync(configOpts.dirs.out);

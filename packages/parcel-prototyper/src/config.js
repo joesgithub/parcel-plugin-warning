@@ -43,7 +43,6 @@ class Config {
     resolveDirs() {
         const dirs = this.config.get('dirs');
         const cwd = this.config.get('cwd');
-        const entryPath = this.config.get('dirs.entry');
         const keys = Object.keys(dirs);
 
         keys.forEach((k) => {
