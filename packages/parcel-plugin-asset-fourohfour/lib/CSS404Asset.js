@@ -4,6 +4,8 @@ const debug = require('debug')('parcel-plugin-asset-fourohfour');
 const fs = require('fs');
 const CSSAsset = require('parcel-bundler/lib/assets/CSSAsset');
 const logger = require('parcel-bundler/lib/Logger');
+const resolveUrlToFilePath = require('./utils/resolveUrlToFilePath');
+const urlJoin = require('parcel-bundler/lib/utils/urlJoin');
 
 /**
  * PLEASE BE AWARE:
@@ -37,6 +39,28 @@ class CssFourOhFourAsset extends CSSAsset {
     } else if (isStatic === false) {
       logger.warn(`Dependency ${name} not resolved in ${this.name}`);
     }
+  }
+
+  addURLDependency(url, from = this.name, opts) {
+    let shouldAdd = true;
+    const filePath = resolveUrlToFilePath(url);
+
+    if (this.options.prototyper) {
+        const staticPath = path.resolve(this.options.prototyper.dirs.static, filePath);
+        const exists = fs.existsSync(staticPath);
+
+        if (exists) {
+            shouldAdd = false;
+        }
+    }
+
+    debug(shouldAdd)
+
+    if (shouldAdd) {
+        return super.processSingleDependency(p, opts);
+    }
+
+    return urlJoin(this.options.publicURL, url);
   }
 }
 

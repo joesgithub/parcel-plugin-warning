@@ -6,6 +6,7 @@ const HTMLAsset = require("parcel-bundler/lib/assets/HTMLAsset");
 const logger = require("parcel-bundler/lib/Logger");
 const path = require("path");
 const resolveUrlToFilePath = require('./utils/resolveUrlToFilePath');
+const urlJoin = require('parcel-bundler/lib/utils/urlJoin');
 
 /**
  * PLEASE BE AWARE:
@@ -63,7 +64,7 @@ class HtmlFourOhFourAsset extends HTMLAsset {
         return super.processSingleDependency(p, opts);
     }
 
-    return p;
+    return urlJoin(this.options.publicURL, assetPath);
   }
 }
 
