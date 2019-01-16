@@ -1,6 +1,6 @@
 {
   "name": "parcel-prototyper",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "> TODO: description",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
@@ -39,9 +39,9 @@
     "normalize-path": "^3.0.0",
     "parcel-bundler": "~1.10.3",
     "parcel-plugin-asset-csv": "^0.1.4",
-    "parcel-plugin-asset-fourohfour": "^0.1.11",
-    "parcel-plugin-ssg": "^0.1.16",
-    "parcel-plugin-ssg-precompile": "^0.1.17",
+    "parcel-plugin-asset-fourohfour": "^0.1.12",
+    "parcel-plugin-ssg": "^0.1.17",
+    "parcel-plugin-ssg-precompile": "^0.1.18",
     "resolve": "^1.8.1",
     "rimraf": "^2.6.2"
   },
