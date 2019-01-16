@@ -1,6 +1,6 @@
 {
   "name": "parcel-plugin-asset-fourohfour",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Parcel plugin that allows broken assets to occur with warnings",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
