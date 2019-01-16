@@ -215,6 +215,8 @@ async function bundle(main, command) {
         template = new Template(configOpts)
         pipeline = new Pipeline(configOpts);
 
+        console.log(configOpts.entryFiles);
+
         // Execute action
         switch (action) {
             case "init":

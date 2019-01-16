@@ -6,6 +6,10 @@ const FrontMatterAsset = require('./FrontMatterAsset');
 const localRequire = require('parcel-bundler/lib/utils/localRequire');
 
 class HTMLAsset extends FrontMatterAsset {
+    constructor(name, options) {
+        super(name, options);
+    }
+    
     /**
      * Override the default behaviour to inject data into posthtml
      * Need to ensure this always stays up-to-date with parcel's built-in asset class

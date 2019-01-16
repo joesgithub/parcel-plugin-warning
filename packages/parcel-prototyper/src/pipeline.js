@@ -15,7 +15,7 @@ class Pipeline {
     constructor(opts) {
         const bundlerOptions = {
             outDir: opts.dirs.out, // The out directory to put the build files in, defaults to dist
-            outFile: 'index.html', // The name of the outputFile
+            outFile: null, // The name of the outputFile
             publicUrl: opts.publicUrl, // The url to server on, defaults to dist
             watch: opts.watch, // whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
             cache: opts.cache, // Enabled or disables caching, defaults to true
@@ -35,18 +35,18 @@ class Pipeline {
         this.entryFiles = opts.entryFiles;
         this.bundler = new Bundler(this.entryFiles, bundlerOptions);
         this.bundler.options.prototyper = opts;
-        this.addAssetTypes();
+        this.addPlugins();
 
         this.bundler.on('bundled', this.handleBundled.bind(this));
         this.bundler.on('buildStart', this.handleBuildStart.bind(this));
         this.bundler.on('buildEnd', this.handleBuildEnd.bind(this));
         this.bundler.on('buildError', this.handleBuildError.bind(this));
 
-        debug('Bundler options: %o', bundlerOptions)
+        debug('Bundler options: %O', bundlerOptions)
     }
 
     handleBundled(bundle) {
-        debug('Bundle complete: %o', bundle);
+        debug('Bundle complete: %O', bundle);
 
         this.copyStatic(
             this.bundler.options.prototyper.dirs.static,
@@ -55,7 +55,7 @@ class Pipeline {
     }
 
     handleBuildStart(entryPoints) {
-        debug('Bundling entrypoints: %s', entryPoints);
+        debug('Bundling entrypoints: %o', entryPoints);
     }
 
     handleBuildEnd() {
@@ -68,16 +68,12 @@ class Pipeline {
         }
     }
 
-    addAssetTypes() {
+    addPlugins() {
         pluginFourOhFour(this.bundler);
         pluginAssetCsv(this.bundler);
         pluginSsg(this.bundler);
         // TODO: renable precompile
         // pluginSsgPrecompile(this.bundler);
-    }
-
-    addPackagers() {
-        // None yet!
     }
 
     async bundle() {
