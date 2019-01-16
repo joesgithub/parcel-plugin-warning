@@ -64,7 +64,7 @@ class HtmlFourOhFourAsset extends HTMLAsset {
         return super.processSingleDependency(p, opts);
     }
 
-    return urlJoin(this.options.publicURL, assetPath);
+    return urlJoin(this.options.publicURL, p);
   }
 }
 
