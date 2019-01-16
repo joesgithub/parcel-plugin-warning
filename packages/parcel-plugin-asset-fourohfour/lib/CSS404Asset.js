@@ -57,7 +57,7 @@ class CssFourOhFourAsset extends CSSAsset {
     debug(shouldAdd)
 
     if (shouldAdd) {
-        return super.processSingleDependency(p, opts);
+        return super.addURLDependency(url, from, opts);
     }
 
     return urlJoin(this.options.publicURL, url);
