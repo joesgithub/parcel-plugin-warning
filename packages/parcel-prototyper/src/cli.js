@@ -140,9 +140,9 @@ program
         let cmd;
 
         for (var i in program.commands) {
-            cmd = (program.commands[i].name() === command)
-                ? program.commands[i]
-                : program
+            cmd = (program.commands[i].name() === command) ?
+                program.commands[i] :
+                program
         }
 
         cmd.help();
@@ -168,13 +168,13 @@ async function bundle(main, command) {
 
     // TODO: refactor "configOpts" to config class calls
     try {
-        const cmd = command && typeof command.name === "function"
-            ? command
-            : main;
-        const action = cmd.name()
-        const cwd = action == "init" || action == "update"
-            ? path.resolve(process.cwd(), main)
-            : process.cwd();
+        const cmd = command && typeof command.name === "function" ?
+            command :
+            main;
+        const action = cmd.name();
+        const cwd = (action == "init" || action == "update") ?
+            path.resolve(process.cwd(), main) :
+            process.cwd();
         const config = new Config({
             cwd: cwd
         });
@@ -199,23 +199,21 @@ async function bundle(main, command) {
             case "build":
                 configOpts.env = "production"
                 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-                configOpts.entries = main.length > 0
-                    ? main
-                    : configOpts.entries;
+                configOpts.entries = main.length > 0 ?
+                    main :
+                    configOpts.entries;
                 break;
             case "serve":
                 configOpts.watch = true
-                configOpts.entries = main.length > 0
-                    ? main
-                    : configOpts.entries;
+                configOpts.entries = main.length > 0 ?
+                    main :
+                    configOpts.entries;
                 break;
         }
 
         configOpts.entryFiles = getEntryFiles(configOpts.dirs.entry, configOpts.entries);
         template = new Template(configOpts)
         pipeline = new Pipeline(configOpts);
-
-        console.log(configOpts.entryFiles);
 
         // Execute action
         switch (action) {

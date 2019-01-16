@@ -20,8 +20,11 @@
         "jest": "^23.6.0"
     },
     "scripts": {
+        "build": "npx lerna run build",
         "publish": "npx lerna publish",
         "run": "npx lerna run",
+        "link": "npx lerna exec \"yarn link\"",
+        "unlink": "npx lerna exec \"yarn unlink\"",
         "exec": "npx lerna exec"
     }
 }
