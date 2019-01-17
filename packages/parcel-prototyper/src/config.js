@@ -21,6 +21,16 @@ class Config {
         }
     }
 
+    set(property, value) {
+        debug('Updating property %s to %o', property, value);
+        
+        this.config.set(property, value);
+        this.resolveDirs();
+        this.config.validate();
+
+        return this.config.get(property);
+    }
+
     update(config) {
         let updated = false;
 
@@ -46,9 +56,12 @@ class Config {
         const keys = Object.keys(dirs);
 
         keys.forEach((k) => {
-            const val = dirs[k];
+            const key = `dirs.${k}`;
+            let val;
             let resolvedVal;
-            
+
+            this.config.reset(key);
+            val = this.config.get(key);            
             resolvedVal = path.resolve(cwd, val);
 
             debug('Resolving dir %s from %s to %s', k, val, resolvedVal);

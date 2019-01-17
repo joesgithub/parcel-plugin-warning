@@ -172,43 +172,48 @@ async function bundle(main, command) {
             command :
             main;
         const action = cmd.name();
-        const cwd = (action == "init" || action == "update") ?
-            path.resolve(process.cwd(), main) :
-            process.cwd();
-        const config = new Config({
-            cwd: cwd
-        });
-        const configOpts = config.get();
+        const config = new Config();
         let template;
         let pipeline;
+        let configOpts;
+
+        debug(action, main);
+
+        // Override configOpts for specific actions
+        switch (action) {
+            case "init":
+                debug(path.resolve(process.cwd(), main));
+                config.set('cwd', path.resolve(process.cwd(), main));
+                break;
+            case "update":
+                config.set('cwd', path.resolve(process.cwd(), main));
+                break;
+            case "build":
+                config.set('env', 'production');
+                process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+                config.set('entries', 
+                            main.length > 0 ?
+                                main :
+                                configOpts.entries
+                );
+                break;
+            case "serve":
+                config.set('watch', true);
+                config.set('entries', 
+                            main.length > 0 ?
+                                main :
+                                configOpts.entries
+                );
+                break;
+        }
+
+        // Extract config values
+        configOpts = config.get();
 
         // Enable developer mode
         if (process.env.DEVELOPER_MODE == "true") {
             configOpts.DEVELOPER_MODE = true;
             configOpts.logLevel = 5;
-        }
-
-        // Override configOpts for specific actions
-        switch (action) {
-            case "init":
-                configOpts.cwd = path.resolve(process.cwd(), main);
-                break;
-            case "update":
-                configOpts.cwd = path.resolve(process.cwd(), main);
-                break;
-            case "build":
-                configOpts.env = "production"
-                process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-                configOpts.entries = main.length > 0 ?
-                    main :
-                    configOpts.entries;
-                break;
-            case "serve":
-                configOpts.watch = true
-                configOpts.entries = main.length > 0 ?
-                    main :
-                    configOpts.entries;
-                break;
         }
 
         configOpts.entryFiles = getEntryFiles(configOpts.dirs.entry, configOpts.entries);
