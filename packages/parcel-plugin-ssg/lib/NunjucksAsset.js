@@ -47,8 +47,9 @@ class NunjucksAsset extends FrontMatterAsset {
     }
 
     configureNunjucks(nunjucks) {
+        const opts = await this.getConfig(['.nunjucksrc', '.nunjucks.js']) || {};
         const loader = new nunjucks.FileSystemLoader(this.options.rootDir);
-        const env = new nunjucks.Environment(loader);
+        const env = new nunjucks.Environment(loader, opts);
 
         for (var key in this.frontMatter) {
             env.addGlobal(key, this.frontMatter[key]);
