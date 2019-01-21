@@ -30,3 +30,21 @@ console.log(example.csv[0][0]);
 console.log(example.csv[1][0]);
 // => 'john'
 ```
+
+## Configuring
+
+The `papaparse` library used to parse CSV assets can be configured by placing a `.papaparserc` or `.papaparse.js` file in the root of your project. These must be a valid [papaparse config](https://www.papaparse.com/docs#config).
+
+For example, in `.papaparse.js`:
+
+```
+module.exports = {
+    delimiter: ",",
+    quoteChar: "'",
+    header: true, // Set to false to disable turning each row into an object with header keys
+    transformHeader: (header) => header.toLowerCase() // Transform all header keys into lowercase
+    dynamicTyping: true, // Set to false to disable converting columns into their true types (e.g, string to number)
+    fastMode: false, // Set to true to speed up processing, as long as there are no `quoteChars` in your assets
+    transform: (val, columnNumber) => val.toLowerCase() // Transforms each value, in this case making all values lowercase
+}
+```

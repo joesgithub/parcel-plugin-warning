@@ -140,6 +140,60 @@ Please be aware that if you have two sibling assets with the same name, their da
 
 For example, if you had a JSON and YAML file accessible from the root at `example.json` and `example.yaml`, they will be combined. Any identical keys will be overwritten.
 
+## Configuring engines
+
+Each consolidate engine can be configured by adding a valid configuration file for that engine to the root of your project, following the conventions:
+
+- `.{{ engine }}rc`
+  - Must be a valid JSON object of the engine's standard config
+- `.{{ engine }}.js`
+  - Must export: 
+    - a JavaScript object of the engine's standard config
+    - a function that rteurns a JavaScript object of the engine's standard config
+
+E.g, for nunjucks you can add a `.nunjucksrc` or `.nunjucks.js` to the root of your project to configure the engine.
+
+`.nunjucksrc`:
+
+```
+{
+    "autoescape": true,
+    "throwOnUndefined": false,
+    "trimBlocks": false,
+    "lstripBlocks": false,
+    "tags": {
+        "blockStart": '<%',
+        "blockEnd": '%>',
+        "variableStart": '<$',
+        "variableEnd": '$>',
+        "commentStart": '<#',
+        "commentEnd": '#>'
+    }
+}
+```
+
+`.nunjucks.js`:
+
+```
+module.exports = () => {
+    return {
+        autoescape: true,
+        throwOnUndefined: false,
+        trimBlocks: false,
+        lstripBlocks: false,
+        tags: {
+            blockStart: '<%',
+            blockEnd: '%>',
+            variableStart" '<$',
+            variableEnd: '$>',
+            commentStart: '<#',
+            commentEnd: '#>'
+        }
+    }
+}
+```
+
+
 ## Official support
 
 Currently the following [consolidate.js](https://github.com/tj/consolidate.js/) template engines are officially supported:
