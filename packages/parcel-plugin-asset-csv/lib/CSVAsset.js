@@ -9,7 +9,12 @@ class CSVAsset extends Asset {
   }
 
   parse(code) {
-    return Papa.parse(code).data;
+    const opts = await this.getConfig(['.papaparserc', '.papaparse.js']) || {
+      header: true,
+      dynamicTyping: true
+    };
+
+    return Papa.parse(code, opts).data;
   }
 
   generate() {
