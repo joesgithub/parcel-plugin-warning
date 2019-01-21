@@ -9,7 +9,17 @@ class HTMLAsset extends FrontMatterAsset {
     constructor(name, options) {
         super(name, options);
     }
-    
+
+    async pretransform() {
+        try {
+            this.contents = await this.getData(this.contents);
+
+            return super.pretransform();
+        } catch (error) {
+            throw error;
+        }
+    }
+
     /**
      * Override the default behaviour to inject data into posthtml
      * Need to ensure this always stays up-to-date with parcel's built-in asset class

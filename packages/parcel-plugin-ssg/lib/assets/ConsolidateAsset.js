@@ -1,81 +1,94 @@
-'use strict';
+"use strict";
 
-const debug = require('debug')('parcel-plugin-ssg:ConsolidateAsset')
-const FrontMatterAsset = require('./FrontMatterAsset');
-const localRequire = require('parcel-bundler/lib/utils/localRequire');
-const path = require('path');
-const resolveEngine = require('../utils/resolveEngine');
-const resolveEngineModule = require('../utils/resolveEngineModule');
-const serializeObject = require('parcel-bundler/lib/utils/serializeObject');
+const debug = require("debug")("parcel-plugin-ssg:ConsolidateAsset");
+const FrontMatterAsset = require("./FrontMatterAsset");
+const fs = require('fs');
+const localRequire = require("parcel-bundler/lib/utils/localRequire");
+const path = require("path");
+const resolveEngine = require("../utils/resolveEngine");
+const resolveEngineModule = require("../utils/resolveEngineModule");
 
 /**
  * Class extends FrontMatterAsset to add consolidate support to the standard
  * HTMLAsset pipeline
  */
 class ConsolidateAsset extends FrontMatterAsset {
-    constructor(name, options) {
-        super(name, options);
+  constructor(name, options) {
+    super(name, options);
 
-        this.ext = path.extname(this.name);
-        this.engine = resolveEngine(this.ext);
-        this.engineModule = resolveEngineModule(this.engine);
+    try {
+      this.type = "html";
+      this.ext = path.extname(this.name);
+      this.engine = resolveEngine(this.ext);
+      this.engineModule = resolveEngineModule(this.engine);
+    } catch (error) {
+      throw error;
     }
+  }
 
-    /**
-     * Hijack the load command to read and parse file
-     * with Nunjucks instead of fs.readFileSync
-     */
-    async load() {
-        try {
-            // Load front matter for usage in consolidate
-            await super.load();
+  /**
+   * Hijack the load command to read and parse file
+   * with Nunjucks instead of fs.readFileSync
+   */
+  async load() {
+    try {
+      // Load front matter for usage in consolidate
+      const rawContents = await fs.readFileSync(this.name, this.encoding);
+      this.rawContents = await this.getData(rawContents);
 
-            let output;
-            let consolidate = require('consolidate');
-            const data = Object.assign(this.frontMatter, {
-                globals: this.globals
-            });
+      let output;
+      let consolidate = require("consolidate");
+      const data = Object.assign(this.frontMatter, {
+        globals: this.globals
+      });
 
-            // Automatically install engine module if it's not found
-            const engineModule = await localRequire(this.engineModule, this.name);
+      // Automatically install engine module if it's not found
+      const engineModule = await localRequire(this.engineModule, this.name);
 
-            // Configure engine
-            this.consolidate = this.configureEngine(this.engine, engineModule, consolidate);
+      // Configure engine
+      this.consolidate = await this.configureEngine(
+        this.engine,
+        engineModule,
+        consolidate
+      );
 
-            output = await this.consolidate[this.engine](this.name, data);
+      debug('Data: %o', data);
 
-            return await this.parseFrontMatter(output);
-        } catch (error) {
-            throw new Error(error);
-        }
+      output = await this.consolidate[this.engine](this.name, data);
+
+      return await this.parseFrontMatter(output);
+    } catch (error) {
+      throw error;
     }
+  }
 
-    /**
-     * Adds a js output for the precompile output of supported engines
-     * @param {String} generated 
-     */
-    async postProcess(generated) {
-        const mainAssets = await super.postProcess(generated);
+  /**
+   * Adds a js output for the precompile output of supported engines
+   * @param {String} generated
+   */
+  async postProcess(generated) {
         const precompileString = await this.precompile(this.engine);
-        let allAssets = mainAssets;
+        let allAssets = [];
 
         if (precompileString) {
-            const precompileValue = serializeObject(
-                precompileString,
-                this.options.minify && !this.options.scopeHoist
-            );
+            let mainAssets = await super.postProcess(generated);
             const precompileAsset = {
-                type: 'js',
-                value: precompileValue
+                type: `${this.engine}-precompile.js`,
+                value: precompileString
             }
 
             allAssets.push(precompileAsset);
+            allAssets = allAssets.concat(mainAssets);
+        } else {
+            allAssets = await super.postProcess(generated);
         }
+
+        debug(allAssets);
 
         return allAssets
     }
 
-    precompile(engine) {
+  async precompile(engine) {
         try {
             // Automatically install engine module if it's not found
             const engineModule = await localRequire(this.engineModule, this.name);
@@ -98,27 +111,40 @@ class ConsolidateAsset extends FrontMatterAsset {
         }
     }
 
-    configureEngine(engine, engineModule, consolidate) {
-        let opts = await this.getConfig([`.${this.engine}rc`, `.${this.engine}.js`], {packageKey: this.engine}) || {};
-        const engineConfigPath = path.resolve(__dirname, '../engines', `${engine}.js`);
-        const engineConfigExists = fs.existsSync(engineConfigPath);
+  async configureEngine(engine, engineModule, consolidate) {
+    try {
+      let opts =
+        (await this.getConfig([`.${this.engine}rc`, `.${this.engine}.js`], {
+          packageKey: this.engine
+        })) || {};
+      const engineConfigPath = path.resolve(
+        __dirname,
+        "../engines",
+        `${engine}.js`
+      );
+      const engineConfigExists = fs.existsSync(engineConfigPath);
 
-        if (typeof opts === "function") {
-            const locals = Object.assign(this.frontMatter, {globals: this.globals});
+      if (typeof opts === "function") {
+        const locals = Object.assign(this.frontMatter, {
+          globals: this.globals
+        });
 
-            opts = opts({locals: locals})
-        }
+        opts = opts({ locals: locals });
+      }
 
-        if (engineConfigExists) {
-            const engineConfig = require(engineConfigPath)(engineModule, opts);
+      if (engineConfigExists) {
+        const engineConfig = require(engineConfigPath)(engineModule, opts);
 
-            consolidate.requires[this.engine] = engineConfig;
-        } else {
-            consolidate.requires[this.engine] = engineModule;
-        }
+        consolidate.requires[this.engine] = engineConfig;
+      } else {
+        consolidate.requires[this.engine] = engineModule;
+      }
 
-        return consolidate;
+      return consolidate;
+    } catch (error) {
+      throw error;
     }
+  }
 }
 
 module.exports = ConsolidateAsset;

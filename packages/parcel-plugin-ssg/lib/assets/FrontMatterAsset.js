@@ -11,22 +11,27 @@ const _ = require('lodash');
  * Extends HTMLAsset to add front matter support to the built-in HTMLAsset
  */
 class FrontMatterAsset extends FourOhFourAsset {
-  async load() {
-    try {
-      const dataDir = this.options.prototyper ? this.options.prototyper.dirs.data : this.options.rootDir;
-      const content = await super.load();
-      this.globals = await this.loadGlobals(dataDir);
-      this.rawContents = await this.parseFrontMatter(content);
 
-      return this.rawContents;
-    } catch (error) {
-      throw error;
-    }
+    /**
+     * Retrieves global data and parses and strips frontmatter from asset source
+     * 
+     * @param {*} content 
+     */
+  async getData(content) {
+    try {
+        const dataDir = this.options.prototyper ? this.options.prototyper.dirs.data : this.options.rootDir;
+        this.globals = await this.loadGlobals(dataDir);
+  
+        return await this.parseFrontMatter(content);
+      } catch (error) {
+        throw error;
+      }
   }
 
   /**
    * Adds a json output for the front matter and global data
-   * @param {*} content 
+   * 
+   * @param {*} generated 
    */
   async postProcess(generated) {
     const mainAssets = await super.postProcess(generated);
