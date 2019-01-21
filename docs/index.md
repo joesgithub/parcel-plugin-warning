@@ -8,16 +8,19 @@ It focuses on letting you rapidly create usable representations of web products 
 
 - Getting started
   - [Quick start](./quick-start.md)
-  - [Updating](./updating.md)
 - Concepts
   - [How it works](./how-it-works.md)
   - [Assets](./assets.md)
   - [Transforms](./transforms.md)
+- Asset types
+  - [CSV](./assets/csv.md)
+  - [Nunjucks](./assets/nunjucks.md)
 - Features
-  - [Front Matter](./front-matter.md)
-  - [Data Files](./data-files.md)
-  - [Routing](./routing.md)
-  - [Sessions](./sessions.md)
-  - [Project Templates](./templates.md)
+  - [Front Matter](./features/front-matter.md)
+  - [Data Files](./features/data-files.md)
+  - [Routing](./features/routing.md)
+  - [Sessions](./features/sessions.md)
+  - [Client-rendering](./features/client-rendering.md)
+  - [Project Templates](./features/templates.md)
 - Advanced topics
   - [Plugins](./plugins.md)
