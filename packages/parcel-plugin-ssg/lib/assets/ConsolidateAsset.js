@@ -26,6 +26,12 @@ class ConsolidateAsset extends FrontMatterAsset {
     }
   }
 
+  async generate() {
+      await this.parseIfNeeded();
+
+      super.generate();
+  }
+
   /**
    * Hijack the load command to read and parse file
    * with Nunjucks instead of fs.readFileSync
@@ -52,11 +58,10 @@ class ConsolidateAsset extends FrontMatterAsset {
         consolidate
       );
 
-      debug("Data: %o", data);
-
       output = await this.consolidate[this.engine](this.name, data);
+      output = await this.parseFrontMatter(output);
 
-      return await this.parseFrontMatter(output);
+      return output;
     } catch (error) {
       throw error;
     }
