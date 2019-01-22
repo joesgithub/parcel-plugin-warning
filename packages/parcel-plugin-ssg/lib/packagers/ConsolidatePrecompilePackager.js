@@ -4,9 +4,11 @@ const debug = require('debug')('parcel-plugin-ssg:ConsolidatePrecompilePackager'
 const { Packager } = require('parcel-bundler')
 
 class ConsolidatePrecompilePackager extends Packager {
-    static shouldAddAsset(bundle, asset) {
-        debug(bundle, asset);
+    constructor(bundle, bundler) {
+        super(bundle, bundler);
+    }
 
+    static shouldAddAsset(bundle, asset) {
         return true;
     }
 

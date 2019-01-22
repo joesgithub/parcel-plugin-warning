@@ -2,7 +2,7 @@
 
 const debug = require("debug")("parcel-plugin-ssg:ConsolidateAsset");
 const FrontMatterAsset = require("./FrontMatterAsset");
-const fs = require('fs');
+const fs = require("fs");
 const localRequire = require("parcel-bundler/lib/utils/localRequire");
 const path = require("path");
 const resolveEngine = require("../utils/resolveEngine");
@@ -52,7 +52,7 @@ class ConsolidateAsset extends FrontMatterAsset {
         consolidate
       );
 
-      debug('Data: %o', data);
+      debug("Data: %o", data);
 
       output = await this.consolidate[this.engine](this.name, data);
 
@@ -62,33 +62,29 @@ class ConsolidateAsset extends FrontMatterAsset {
     }
   }
 
+// Start: TODO: Review at a later date
+
   /**
    * Adds a js output for the precompile output of supported engines
    * @param {String} generated
    */
-  async postProcess(generated) {
-        const precompileString = await this.precompile(this.engine);
-        let allAssets = [];
+  /* async postProcess(generated) {
+    let allAssets = [];
+    let mainAssets = await super.postProcess(generated);
+    const clientAsset = {
+        type: this.ext,
+        value: this.templateContent
+    };
 
-        if (precompileString) {
-            let mainAssets = await super.postProcess(generated);
-            const precompileAsset = {
-                type: `${this.engine}-precompile.js`,
-                value: precompileString
-            }
+    allAssets.push(clientAsset);
+    allAssets = allAssets.concat(mainAssets);
 
-            allAssets.push(precompileAsset);
-            allAssets = allAssets.concat(mainAssets);
-        } else {
-            allAssets = await super.postProcess(generated);
-        }
+    debug(allAssets);
 
-        debug(allAssets);
+    return allAssets;
+  } */
 
-        return allAssets
-    }
-
-  async precompile(engine) {
+  /*   async precompile(engine) {
         try {
             // Automatically install engine module if it's not found
             const engineModule = await localRequire(this.engineModule, this.name);
@@ -109,7 +105,9 @@ class ConsolidateAsset extends FrontMatterAsset {
         } catch (error) {
             throw error;
         }
-    }
+    } */
+
+    // End: TODO: Review at a later date
 
   async configureEngine(engine, engineModule, consolidate) {
     try {

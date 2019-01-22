@@ -13,6 +13,8 @@ class ConsolidatePackager extends HTMLPackager {
     insertSiblingBundles(siblingBundles, tree) {
         const bundles = [];
     
+        debug(this.bundle);
+
         for (let bundle of this.bundle.siblingBundles) {
           if (bundle.type.indexOf('precompile') > -1) {
             bundles.push({

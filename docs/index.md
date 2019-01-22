@@ -20,7 +20,6 @@ It focuses on letting you rapidly create usable representations of web products 
   - [Data Files](./features/data-files.md)
   - [Routing](./features/routing.md)
   - [Sessions](./features/sessions.md)
-  - [Client-rendering](./features/client-rendering.md)
   - [Project Templates](./features/templates.md)
 - Advanced topics
   - [Plugins](./plugins.md)
