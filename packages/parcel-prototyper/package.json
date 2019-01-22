@@ -1,6 +1,6 @@
 {
   "name": "parcel-prototyper",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "> TODO: description",
   "author": "chrisdmacrae <hello@chrisdmacrae.com>",
   "homepage": "",
@@ -40,7 +40,7 @@
     "parcel-bundler": "~1.10.3",
     "parcel-plugin-asset-csv": "^0.1.5",
     "parcel-plugin-asset-fourohfour": "^0.1.13",
-    "parcel-plugin-ssg": "^0.1.20",
+    "parcel-plugin-ssg": "^0.1.21",
     "parcel-plugin-ssg-precompile": "^0.1.19",
     "resolve": "^1.8.1",
     "rimraf": "^2.6.2"
