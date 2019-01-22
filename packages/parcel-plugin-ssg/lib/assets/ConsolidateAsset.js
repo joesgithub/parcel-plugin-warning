@@ -62,7 +62,7 @@ class ConsolidateAsset extends FrontMatterAsset {
     }
   }
 
-// Start: TODO: Review at a later date
+  // Start: TODO: Review at a later date
 
   /**
    * Adds a js output for the precompile output of supported engines
@@ -107,7 +107,7 @@ class ConsolidateAsset extends FrontMatterAsset {
         }
     } */
 
-    // End: TODO: Review at a later date
+  // End: TODO: Review at a later date
 
   async configureEngine(engine, engineModule, consolidate) {
     try {
@@ -127,11 +127,15 @@ class ConsolidateAsset extends FrontMatterAsset {
           globals: this.globals
         });
 
-        opts = opts({ locals: locals });
+        opts = opts({ locals: locals, bundleOptions: this.options });
       }
 
       if (engineConfigExists) {
-        const engineConfig = require(engineConfigPath)(engineModule, opts);
+        const engineConfig = require(engineConfigPath)(
+          engineModule,
+          opts,
+          this.options
+        );
 
         consolidate.requires[this.engine] = engineConfig;
       } else {
