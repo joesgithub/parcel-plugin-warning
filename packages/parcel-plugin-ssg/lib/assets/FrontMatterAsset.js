@@ -71,10 +71,14 @@ class FrontMatterAsset extends FourOhFourAsset {
 
     if (files.length > 0) {
       for (var i in files) {
-        const file = files[i];
-        const name = path.basename(file, path.extname(file));
-        const key = name.replace(this.options.rootDir, "").replace("/", ".");
+        const file = path.normalize(files[i]);
+        const dataDir = (this.options.prototyper) ? this.options.prototyper.dirs.data : this.options.rootDir;
+        const relFilePath = path.normalize(file.replace(path.normalize(dataDir + "/"), ""));
+        const ext = path.extname(file);
+        const key = relFilePath.replace("/", ".").replace(ext, "");
         const data = await dataFiles.getData(file);
+
+        debug(file, relFilePath, this.options.rootDir, ext, key);
 
         // Add as a dependency so it is added to the watcher and invalidates
         // this asset when the config changes.
