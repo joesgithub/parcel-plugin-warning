@@ -73,7 +73,7 @@ class Template {
     }
 
     if (fs.existsSync(this.projectPkgPath)) {
-        projectPkg = require(this.projectPkgPath)
+        projectPkg = JSON.parse(fs.readFileSync(this.projectPkgPath));
     }
 
     projectPkg.name = projectName;
@@ -90,7 +90,7 @@ class Template {
    * Executes the logic in the template's `main` entry on the project
    */
   async runTemplateScript() {
-    const templatePkg = require(this.templatePkgPath);
+    const templatePkg = JSON.parse(fs.readFileSync(this.templatePkgPath));
     const entryRelPath = templatePkg.main;
     const entryPath = path.resolve(this.templatePath, entryRelPath);
 
@@ -149,7 +149,7 @@ class Template {
    * @param {Object} scripts A valid NPM scripts object
    */
   async addScripts(scripts) {
-    const projectPkg = require(this.projectPkgPath);
+    const projectPkg = JSON.parse(fs.readFileSync(this.projectPkgPath));
 
     for (var script in scripts) {
         const val = scripts[script];
@@ -243,7 +243,7 @@ class Template {
     let template;
 
     if (this.projectPkgPath) {
-        const projectPkg = require(this.projectPkgPath);
+        const projectPkg = JSON.parse(fs.readFileSync(this.projectPkgPath));
         const dependencies = projectPkg.dependencies || {};
         const devDependencies = projectPkg.devDependencies || {};
         const deps = Object.assign(devDependencies, dependencies);
