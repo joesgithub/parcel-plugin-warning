@@ -267,7 +267,8 @@ class Template {
    * Resolve the absolute path to the template in "node_modules/"
    */
   getTemplatePath() {
-    const templateEntryPath = require.resolve(this.template, {
+    const templateName = this.getTemplateFromPackage();
+    const templateEntryPath = require.resolve(templateName, {
       paths: [path.resolve(process.cwd(), this.projectPath)]
     });
     const templatePath = path.dirname(templateEntryPath);
