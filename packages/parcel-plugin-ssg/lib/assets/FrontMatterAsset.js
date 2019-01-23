@@ -75,7 +75,8 @@ class FrontMatterAsset extends FourOhFourAsset {
         const dataDir = (this.options.prototyper) ? this.options.prototyper.dirs.data : this.options.rootDir;
         const relFilePath = path.normalize(file.replace(path.normalize(dataDir + "/"), ""));
         const ext = path.extname(file);
-        const key = relFilePath.replace("/", ".").replace(ext, "");
+        const seperatorPattern = new RegExp(/[\\\\]{2}|[\\|\/]{1}/);
+        const key = relFilePath.replace(seperatorPattern, ".").replace(ext, "");
         const data = await dataFiles.getData(file);
 
         debug(file, relFilePath, this.options.rootDir, ext, key);
