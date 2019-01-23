@@ -110,31 +110,30 @@ class Template {
             logger.log('Running template scripts...');
             debug('Executing template `main` script from %s', entryPath);
 
-            switch (typeof entry) {
-                case "function":
-                    entryData = await entry(templateConfig);
-                    break;
-                case "object":
-                    entryData = entry;
-                    break;
+            if (typeof entry === "function") {
+                entryData = await entry(templateConfig);
+            } else {
+                entryData = entry;
+            }
+
+            if (typeof entryData === "object") {
+                if (
+                    entryData.scripts
+                    && typeof entryData.scripts === "object"
+                ) {
+                    await this.addScripts(entryData.scripts);
+                }
+    
+                if (
+                    entryData.dependencies 
+                    && Array.isArray(entryData.dependencies)
+                    && entryData.dependencies.length > 0
+                ) {
+                    await this.addDependencies(entryData.dependencies);
+                }
             }
 
             debug('Template config %o', entryData);
-
-            if (
-                entryData.scripts
-                && typeof entryData.scripts === "object"
-            ) {
-                await this.addScripts(entryData.scripts);
-            }
-
-            if (
-                entryData.dependencies 
-                && Array.isArray(entryData.dependencies)
-                && entryData.dependencies.length > 0
-            ) {
-                await this.addDependencies(entryData.dependencies);
-            }
 
             return true;
         }
