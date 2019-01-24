@@ -23,6 +23,7 @@ Data files are parsed and the data is made available using the filename minus th
 E.g,
 
 | File | Key |
+| --- | --- |
 | `src/data/example.yaml` | `globals.example` |
 | `src/data/example/example.yaml` | `globals.example.example` |
 

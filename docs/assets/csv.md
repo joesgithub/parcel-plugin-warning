@@ -16,5 +16,5 @@ In `index.js`:
 
 ```
 const people = require('./people.csv');
-// => becomes [[first, last], [john, doe], [mary, poppins]]
+// => becomes [{first: john, last: doe}, {first: mary, last: poppins}]]
 ```
