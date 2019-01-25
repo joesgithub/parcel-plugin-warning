@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.19](https://github.com/chrisdmacrae/parcel-prototyper/compare/parcel-prototyper@0.2.18...parcel-prototyper@0.2.19) (2019-01-25)
+
+**Note:** Version bump only for package parcel-prototyper
+
+
+
+
+
+
 ## [0.2.18](https://github.com/parcel-prototyper/parcel-prototyper/compare/parcel-prototyper@0.2.17...parcel-prototyper@0.2.18) (2019-01-24)
 
 **Note:** Version bump only for package parcel-prototyper
