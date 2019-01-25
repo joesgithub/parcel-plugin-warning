@@ -177,12 +177,9 @@ async function bundle(main, command) {
         let pipeline;
         let configOpts;
 
-        debug(action, main);
-
         // Override configOpts for specific actions
         switch (action) {
             case "init":
-                debug(path.resolve(process.cwd(), main));
                 config.set('cwd', path.resolve(process.cwd(), main));
                 break;
             case "update":
@@ -191,18 +188,18 @@ async function bundle(main, command) {
             case "build":
                 config.set('env', 'production');
                 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-                config.set('entries', 
-                            main.length > 0 ?
-                                main :
-                                configOpts.entries
+                config.set('entries',
+                    command & main.length > 0 ?
+                    main :
+                    config.get('entries')
                 );
                 break;
             case "serve":
                 config.set('watch', true);
-                config.set('entries', 
-                            main.length > 0 ?
-                                main :
-                                configOpts.entries
+                config.set('entries',
+                    command & main.length > 0 ?
+                    main :
+                    config.get('entries')
                 );
                 break;
         }

@@ -60,7 +60,6 @@ class Config {
             let val;
             let resolvedVal;
 
-            this.config.reset(key);
             val = this.config.get(key);            
             resolvedVal = path.resolve(cwd, val);
 
