@@ -16,7 +16,7 @@ class DataFiles {
 
     async getFilePaths(dir) {
         dir = dir || this.dir;
-        const pattern = path.join(dir, "**/*.{csv,json,yml,yaml,toml}"); // TODO: add JS support
+        const pattern = path.join(dir, "**/*.{csv,json,yml,yaml,toml,js}");
         const files = glob.sync(pattern);
 
         return files;
@@ -45,11 +45,16 @@ class DataFiles {
 
     async loadJS(path) {
         try {
+            if (require.cache[path]) {
+                delete require.cache[path];
+            }
+
             const contents = require(path);
-            
+
             return this.parseJS(contents);
         } catch (error) {
             logger.warn(`Could not process data file ${path}`);
+            logger.warn(error);
         }
     }
 
@@ -66,22 +71,24 @@ class DataFiles {
     }
 
     async loadJSON(path) {
-        try { 
+        try {
             const data = await fs.readFile(path, 'utf-8');
 
             return json5.parse(data);
         } catch (error) {
             logger.warn(`Could not process data file ${path}`);
+            logger.warn(error);
         }
     }
 
     async loadYAML(path) {
         try {
             const data = await fs.readFile(path, 'utf-8');
-        
+
             return yaml.safeLoad(data);
         } catch (error) {
             logger.warn(`Could not process data file ${path}`);
+            logger.warn(error);
         }
     }
 
@@ -92,6 +99,7 @@ class DataFiles {
             return toml.parse(data);
         } catch (error) {
             logger.warn(`Could not process data file ${path}`);
+            logger.warn(error);
         }
     }
 
@@ -102,6 +110,7 @@ class DataFiles {
             return Papa.parse(data).data;
         } catch (error) {
             logger.warn(`Could not process data file ${path}`);
+            logger.warn(error);
         }
     }
 }
