@@ -1,6 +1,6 @@
 {
   "name": "parcel-plugin-warning",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Parcel plugin that allows broken assets to occur with warnings",
   "author": "joesgithub <joe@joeplusweb.com>",
   "homepage": "",

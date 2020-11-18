@@ -16,6 +16,8 @@ const posthtmlTransform = require('parcel-bundler/lib/transforms/posthtml');
 
 const htmlnanoTransform = require('parcel-bundler/lib/transforms/htmlnano');
 
+const logger = require('@parcel/logger');
+
 const isURL = require('parcel-bundler/lib/utils/is-url'); // A list of all attributes that may produce a dependency
 // Based on https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
 
@@ -115,6 +117,7 @@ class WarningHTMLAsset extends Asset {
       } finally {
         if (_didIteratorError) {
           // throw _iteratorError;
+          logger.warn(_didIteratorError);
         }
       }
     }
@@ -316,6 +319,7 @@ class WarningHTMLAsset extends Asset {
         } finally {
           if (_didIteratorError2) {
             // throw _iteratorError2;
+            logger.warn(_didIteratorError2);
           }
         }
       }
