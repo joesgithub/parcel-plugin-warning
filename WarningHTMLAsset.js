@@ -13,7 +13,7 @@ const urlJoin = require('parcel-bundler/lib/utils/urlJoin');
  * This is a fairly fragile patch and if not maintained could very easily
  * break dependency resolution for HTMLAssets.
  */
-class HtmlFourOhFourAsset extends HTMLAsset {
+class WarningHTMLAsset extends HTMLAsset {
   addDependency(name, opts) {
     let exists;
     let isStatic = false;
@@ -68,4 +68,4 @@ class HtmlFourOhFourAsset extends HTMLAsset {
   }
 }
 
-module.exports = HtmlFourOhFourAsset;
+module.exports = WarningHTMLAsset;
