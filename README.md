@@ -11,5 +11,3 @@ npm install parcel-plugin-warning --save
 ```
 
 Then continue using Parcel as normal.
-
-Forked from [chrisdmacrae/parcel-prototyper](https://github.com/chrisdmacrae/parcel-prototyper)
