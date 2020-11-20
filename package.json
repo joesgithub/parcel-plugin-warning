@@ -1,14 +1,11 @@
 {
   "name": "parcel-plugin-warning",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Parcel plugin that allows broken assets to occur with warnings",
   "author": "joesgithub <joe@joeplusweb.com>",
   "homepage": "",
   "license": "MIT",
   "main": "index.js",
-  "files": [
-    "lib"
-  ],
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
